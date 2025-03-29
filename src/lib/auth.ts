@@ -16,10 +16,20 @@ export const { auth, handlers, signIn } = NextAuth({
       },
       authorize: async (credentials) => {
         const validatedCredentials = schema.parse(credentials);
-        const user = await db.student.findFirst({
+        const user = await db.users.findFirst({
           where: {
             email: validatedCredentials.email,
             password: validatedCredentials.password,
+          },
+          select: {
+            id: true,
+            user_id: true,
+            name: true,
+            role: true, // Directly include role here
+            school_year: true,
+            email: true,
+            createdAt: true,
+            updatedAt: true,
           },
         });
 

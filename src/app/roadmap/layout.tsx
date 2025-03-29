@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ReactNode } from "react";
+import SideNav from "@/components/ui/side-nav";
+import { Inter } from "next/font/google";
 
+const inter = Inter({ subsets: ["latin"] });
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -24,14 +27,17 @@ type LayoutProps = {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <main className="flex items-center justify-center bg-white">
-          <div className="bg-white p-8 rounded-lg w-full max-w-md">
-            {children}
+      <body className={inter.className}>
+        <div className="flex bg-white">
+          <SideNav />
+          <div className="w-full overflow-x-auto">
+            <div className="flex-grow overflow-y-auto h-screen">
+              <div className="w-full flex justify-center mx-auto">
+                <div className="w-full md:max-w-6xl">{children}</div>
+              </div>
+            </div>
           </div>
-        </main>
+        </div>
       </body>
     </html>
   );

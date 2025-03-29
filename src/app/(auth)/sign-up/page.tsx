@@ -7,10 +7,11 @@ import { redirect } from "next/navigation";
 
 const Page = async () => {
   const session = await auth();
-  if (session) redirect("/");
+  if (!session) redirect("/sign-in");
+  if (session.user.role !== "admin") redirect("/");
   return (
     <div className="w-full max-w-sm mx-auto space-y-6">
-      <h1 className="text-2xl font-bold text-center mb-6">Create Account</h1>
+      <h1 className="text-2xl font-bold text-center mb-6">Оюутан нэмэх</h1>
 
       {/* Email/Password Sign Up */}
       <form
@@ -18,9 +19,6 @@ const Page = async () => {
         action={async (formData: FormData) => {
           "use server";
           const res = await signUp(formData);
-          if (res.success) {
-            redirect("/sign-in");
-          }
         }}
       >
         <Input
@@ -37,16 +35,35 @@ const Page = async () => {
           required
           autoComplete="new-password"
         />
+        <Input
+          name="user_id"
+          placeholder="user_id"
+          required
+          autoComplete="new-user_id"
+        />
+        <Input
+          name="school_year"
+          placeholder="school_year"
+          required
+          autoComplete="new-school_year"
+        />
+        <Input
+          name="role"
+          placeholder="role"
+          required
+          autoComplete="new-role"
+        />
+        <Input
+          name="name"
+          placeholder="name"
+          required
+          autoComplete="new-name"
+        />
+
         <Button className="w-full" type="submit">
-          Sign Up
+          Нэмэх
         </Button>
       </form>
-
-      <div className="text-center">
-        <Button asChild variant="link">
-          <Link href="/sign-in">Already have an account? Sign in</Link>
-        </Button>
-      </div>
     </div>
   );
 };
