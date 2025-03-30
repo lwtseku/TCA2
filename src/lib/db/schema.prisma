@@ -13,7 +13,7 @@ model Users {
 
     name          String
     role          Role
-    school_year   Int?
+    school_year   Int
     email         String          @unique
     password      String
     emailVerified DateTime?
