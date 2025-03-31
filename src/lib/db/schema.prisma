@@ -56,7 +56,7 @@ model Timetable {
 enum WeekDay {
     Даваа
     Мягмар
-    Лхавга
+    Лхагва
     Пүрэв
     Баасан
 }
