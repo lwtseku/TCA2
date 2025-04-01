@@ -56,10 +56,10 @@ export const NavItems = () => {
       position: "top",
     },
     {
-      name: "Дүн",
-      href: "/exam_score",
+      name: "Даалгавар",
+      href: "/assignment/teacher",
       icon: <Pencil size={20} />,
-      active: isNavItemActive(pathname, "/exam_score"),
+      active: isNavItemActive(pathname, "/assignment/teacher"),
       position: "top",
     },
     {
