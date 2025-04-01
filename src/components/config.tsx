@@ -36,7 +36,7 @@ export const NavItems = () => {
     },
     {
       name: "Хичээл",
-      href: "/class",
+      href: "/lesson",
       icon: <Book size={20} />,
       active: isNavItemActive(pathname, "/class"),
       position: "top",

@@ -8,10 +8,7 @@ const Home = async () => {
   const session = await auth();
 
   // 🔐 Redirect if no session
-  if (!session || !session.user) {
-    redirect("/auth/sign-in");
-    return null;
-  }
+  if (!session) redirect("/sign-in");
 
   // 👤 Get user info
   const user = await prisma.users.findUnique({
@@ -145,19 +142,25 @@ const Home = async () => {
             <div className="flex items-start gap-4 bg-gray-50 p-4 rounded-lg">
               <div className="text-blue-500 text-xl">📘</div>
               <div>
-                <p className="text-gray-600 font-medium">Хичээл AI-д шинэ материал нэмэгдсэн.</p>
+                <p className="text-gray-600 font-medium">
+                  Хичээл AI-д шинэ материал нэмэгдсэн.
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-4 bg-gray-50 p-4 rounded-lg">
               <div className="text-green-500 text-xl">✅</div>
               <div>
-                <p className="text-gray-600 font-medium">Системд амжилттай нэвтэрсэн.</p>
+                <p className="text-gray-600 font-medium">
+                  Системд амжилттай нэвтэрсэн.
+                </p>
               </div>
             </div>
             <div className="flex items-start gap-4 bg-gray-50 p-4 rounded-lg">
               <div className="text-purple-500 text-xl">📅</div>
               <div>
-                <p className="text-gray-600 font-medium">Багшийн хуваарь шинэчлэгдсэн.</p>
+                <p className="text-gray-600 font-medium">
+                  Багшийн хуваарь шинэчлэгдсэн.
+                </p>
               </div>
             </div>
           </div>

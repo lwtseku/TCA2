@@ -13,7 +13,7 @@ model Users {
 
     name          String
     role          Role
-    school_year   Int
+    school_year   Int?
     email         String          @unique
     password      String
     emailVerified DateTime?
@@ -27,6 +27,7 @@ model Users {
     updatedAt   DateTime      @updatedAt
     Lesson_list Lesson_list[]
     Timetable   Timetable[]
+    Lesson      Lesson[]
 }
 
 model Lesson_list {
@@ -38,7 +39,25 @@ model Lesson_list {
     description String?
     teacher     Users       @relation(fields: [teacher_id], references: [user_id])
     teacher_id  String
+    school_year Int?
     Timetable   Timetable[]
+    Lesson      Lesson[]
+}
+
+model Lesson {
+    id          Int         @id @default(autoincrement())
+    lessonCode  String
+    title       String
+    description String?
+    pdfUrl      String? // PDF URL
+    videoUrl    String?
+    school_year Int?
+    createdAt   DateTime    @default(now())
+    updatedAt   DateTime    @updatedAt
+    teacherId   String
+    Code        Lesson_list @relation(fields: [lessonCode], references: [lesson_code])
+
+    Id Users @relation(fields: [teacherId], references: [user_id])
 }
 
 model Timetable {
