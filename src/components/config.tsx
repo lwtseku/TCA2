@@ -57,9 +57,9 @@ export const NavItems = () => {
     },
     {
       name: "Даалгавар",
-      href: "/assignment/teacher",
+      href: "/assignment",
       icon: <Pencil size={20} />,
-      active: isNavItemActive(pathname, "/assignment/teacher"),
+      active: isNavItemActive(pathname, "/assignment"),
       position: "top",
     },
     {
