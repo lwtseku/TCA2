@@ -33,15 +33,18 @@ model Users {
 model Lesson_list {
     id String @id @default(cuid())
 
-    lesson_code String      @unique
+    lesson_code String    @unique
     lesson_name String
     credits     Int
     description String?
-    teacher     Users       @relation(fields: [teacher_id], references: [user_id])
-    teacher_id  String
+    teacher     Users?    @relation(fields: [teacher_id], references: [user_id])
+    teacher_id  String?
     school_year Int?
-    Timetable   Timetable[]
-    Lesson      Lesson[]
+    type        TypesGP?
+    semester    Semester?
+
+    Timetable Timetable[]
+    Lesson    Lesson[]
 }
 
 model Lesson {
@@ -78,6 +81,16 @@ enum WeekDay {
     Лхагва
     Пүрэв
     Баасан
+}
+
+enum Semester {
+    Хавар
+    Намар
+}
+
+enum TypesGP {
+    Gen
+    Pro
 }
 
 enum Role {

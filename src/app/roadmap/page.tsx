@@ -1,6 +1,10 @@
+import { auth } from "@/lib/auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function RoadmapPage() {
+export default async function RoadmapPage() {
+  const session = await auth();
+  if (!session) redirect("/sign-in");
   const courses = [
     { id: "1st-course", name: "1-р курс" },
     { id: "2nd-course", name: "2-р курс" },
