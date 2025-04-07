@@ -18,7 +18,7 @@ const Home = async () => {
     where: { email: session.user.email },
   });
 
-  // Хэрэв хэрэглэгч олдохгүй бол sign-in хуудас руу буцаах
+  // Хэрэв хэрэглэгч олдсонгүй бол sign-in хуудас руу буцаах
   if (!user) {
     redirect("/auth/sign-in");
     return null;
@@ -28,17 +28,17 @@ const Home = async () => {
   const timetableData = await prisma.timetable.findMany({
     where:
       user.role === "teacher"
-        ? { teacher_id: user.user_id } // 👩‍🏫 Багшийн хувьд
-        : { school_year: user.school_year || undefined }, // 👨‍🎓 Оюутны хувьд
+        ? { teacher_id: user.user_id } // Багшийн хуваарь
+        : { school_year: user.school_year || undefined }, // Оюутны хуваарь
     include: {
-      lesson: true,
+      lesson: true, // Lesson_list доторх мэдээллийг авах
     },
   });
 
   // 🕒 Цагийн хуваарь болон өдрүүд
   const weekdays = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"];
   const timeSlots = [
-    "8:50 - 10:10",
+    "08:50 - 10:10",
     "10:20 - 11:40",
     "11:50 - 13:10",
     "14:00 - 15:20",
@@ -50,7 +50,7 @@ const Home = async () => {
     const entry = timetableData.find(
       (entry) => entry.weekdays === day && entry.start_time === startTime
     );
-    return entry ? entry.lesson.lesson_name : "";
+    return entry ? entry.lesson.lesson_name : "Хичээл байхгүй";
   };
 
   return (
@@ -128,7 +128,7 @@ const Home = async () => {
                         key={`${day}-${slot}`}
                         className="border px-4 py-2 bg-pink-100 text-center"
                       >
-                        {getLessonForTimeSlot(day, slot) || "Хичээл байхгүй"}
+                        {getLessonForTimeSlot(day, slot)}
                       </td>
                     ))}
                   </tr>
