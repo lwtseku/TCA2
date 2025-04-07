@@ -23,18 +23,15 @@ const Lesson = async () => {
           <h1 className="text-3xl font-bold mb-6">Teacher's Lesson List</h1>
           {Teacherlessonlist.map((lesson) => (
             <div key={lesson.lesson_code}>
-              <div className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-100 transition">
+              <Link
+                href={`/lesson/view/${lesson.lesson_code}`}
+                className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-100 transition"
+              >
                 <h3 className="text-xl font-semibold">{lesson.lesson_name}</h3>
                 <p className="text-gray-600">
                   {lesson.description || "No description available"}
                 </p>
-                <Link href={`/lesson/view/${lesson.lesson_code}`}>
-                  <h1>Hicheel uzeh</h1>
-                </Link>
-                <Link href={`/lesson/add/${lesson.lesson_code}`}>
-                  <h1>Hicheel nemeh</h1>
-                </Link>
-              </div>
+              </Link>
             </div>
           ))}
         </>
@@ -43,15 +40,15 @@ const Lesson = async () => {
           <h1 className="text-3xl font-bold mb-6">Student's Lesson List</h1>
           {Studentlessonlist.map((lesson) => (
             <div key={lesson.lesson_code}>
-              <div className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-100 transition">
+              <Link
+                href={`/lesson/view/${lesson.lesson_code}`}
+                className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-100 transition"
+              >
                 <h3 className="text-xl font-semibold">{lesson.lesson_name}</h3>
                 <p className="text-gray-600">
                   {lesson.description || "No description available"}
                 </p>
-                <Link href={`/lesson/view/${lesson.lesson_code}`}>
-                  <h1>Hicheel uzeh</h1>
-                </Link>
-              </div>
+              </Link>
             </div>
           ))}
         </>

@@ -15,12 +15,6 @@ const Home = async () => {
     where: { email: session.user.email },
   });
 
-  // Redirect if user not found
-  if (!user) {
-    redirect("/auth/sign-in");
-    return null;
-  }
-
   // 📚 Get timetable
   const timetableData = await prisma.timetable.findMany({
     where:

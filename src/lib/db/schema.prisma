@@ -30,6 +30,16 @@ model Users {
     Lesson      Lesson[]
 }
 
+model Roadmap {
+    id          String    @id @default(cuid())
+    lesson_code String
+    lesson_name String
+    credits     Int
+    type        TypesGP?
+    semester    Semester?
+    school_year Int?
+}
+
 model Lesson_list {
     id String @id @default(cuid())
 
@@ -48,7 +58,8 @@ model Lesson_list {
 }
 
 model Lesson {
-    id          Int         @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     lessonCode  String
     title       String
     description String?
