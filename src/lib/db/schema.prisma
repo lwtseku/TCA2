@@ -83,9 +83,17 @@ model Timetable {
     weekdays    WeekDay
     start_time  String
     end_time    String
-    school_year Int
+    school_year Int // Талбарыг зөв тодорхойлж байна
     lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
     teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
+}
+
+model Schedule {
+    id        String   @id @default(cuid()) // Хуучин ID
+    event     String // Үйл явдлын нэр (жишээ: "Lecture on Math")
+    date      DateTime // Үйл явдлын огноо
+    createdAt DateTime @default(now()) // Бүртгэгдсэн огноо
+    updatedAt DateTime @updatedAt // Сүүлд шинэчлэгдсэн огноо
 }
 
 enum WeekDay {

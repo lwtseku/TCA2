@@ -33,7 +33,7 @@ const Layout = ({ children }: LayoutProps) => {
           <div className="w-full overflow-x-auto">
             <div className="flex-grow overflow-y-auto h-screen">
               <div className="w-full flex justify-center mx-auto">
-                <div className="w-full md:max-w-6xl">{children}</div>
+                <main>{children}</main>
               </div>
             </div>
           </div>

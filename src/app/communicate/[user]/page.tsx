@@ -43,7 +43,7 @@ export default async function ChatPage({ params }: { params: { user: string } })
   }
  
   // 🌟 Route Segment ашиглан хэрэглэгчийн ID авах
-  const selectedUserId = await Promise.resolve(params.user) || "";
+  const selectedUserId = await Promise.resolve(await params.user) || "";
   const messages = await getChatData(currentUser.user_id, selectedUserId);
  
   const allUsers = await prisma.users.findMany({

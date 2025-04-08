@@ -15,27 +15,24 @@ const Home = async () => {
     where: { email: session.user.email },
   });
 
-  // Redirect if user not found
-  if (!user) {
-    redirect("/auth/sign-in");
-    return null;
-  }
+  // Хэрэв хэрэглэгч олдсонгүй бол sign-in хуудас руу буцаах
+ 
 
   // 📚 Get timetable
   const timetableData = await prisma.timetable.findMany({
     where:
       user.role === "teacher"
-        ? { teacher_id: user.user_id }
-        : { school_year: user.school_year || undefined },
+        ? { teacher_id: user.user_id } // Багшийн хуваарь
+        : { school_year: user.school_year || undefined }, // Оюутны хуваарь
     include: {
-      lesson: true,
+      lesson: true, // Lesson_list доторх мэдээллийг авах
     },
   });
 
   // 🕒 Time slots and weekdays
   const weekdays = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"];
   const timeSlots = [
-    "8:50 - 10:10",
+    "08:50 - 10:10",
     "10:20 - 11:40",
     "11:50 - 13:10",
     "14:00 - 15:20",
