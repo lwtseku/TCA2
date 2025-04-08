@@ -1,5 +1,5 @@
 import { Events } from "@/app/page";
-import { EventCard } from "./scheduleEventCard";
+import { EventCard } from "./scheduleCard";
 import {
   AlertDialog,
   AlertDialogCancel,

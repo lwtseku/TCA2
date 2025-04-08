@@ -22,14 +22,14 @@ const Home = async () => {
         ? { teacher_id: user.user_id }
         : { school_year: user.school_year || undefined },
     include: {
-      lesson: true,
+      lesson: true, // Lesson_list доторх мэдээллийг авах
     },
   });
 
   // 🕒 Time slots and weekdays
   const weekdays = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"];
   const timeSlots = [
-    "8:50 - 10:10",
+    "08:50 - 10:10",
     "10:20 - 11:40",
     "11:50 - 13:10",
     "14:00 - 15:20",
@@ -41,6 +41,7 @@ const Home = async () => {
     const entry = timetableData.find(
       (entry) => entry.weekdays === day && entry.start_time === startTime
     );
+    return entry ? entry.lesson.lesson_name : "Хичээл байхгүй";
     return entry ? entry.lesson.lesson_name : "Хичээл байхгүй";
   };
 
