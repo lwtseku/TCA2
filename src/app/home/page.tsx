@@ -7,35 +7,40 @@ const prisma = new PrismaClient();
 const Home = async () => {
   const session = await auth();
 
-  // 🔐 Session байхгүй бол sign-in хуудас руу буцаана
   if (!session || !session.user) {
     redirect("/auth/sign-in");
     return null;
   }
 
-  // 👤 Нэвтэрсэн хэрэглэгчийн мэдээллийг авах
   const user = await prisma.users.findUnique({
     where: { email: session.user.email },
   });
 
-  // Хэрэв хэрэглэгч олдсонгүй бол sign-in хуудас руу буцаах
   if (!user) {
     redirect("/auth/sign-in");
     return null;
   }
 
-  // 📚 Хичээлийн хуваарийн өгөгдлийг авах
   const timetableData = await prisma.timetable.findMany({
     where:
       user.role === "teacher"
-        ? { teacher_id: user.user_id } // Багшийн хуваарь
-        : { school_year: user.school_year || undefined }, // Оюутны хуваарь
-    include: {
-      lesson: true, // Lesson_list доторх мэдээллийг авах
+        ? { teacher_id: user.user_id }
+        : { school_year: user.school_year || undefined },
+    include: { lesson: true },
+  });
+
+  const today = new Date();
+  const closestSchedule = await prisma.schedule.findFirst({
+    where: {
+      date: {
+        gte: today,
+      },
+    },
+    orderBy: {
+      date: "asc",
     },
   });
 
-  // 🕒 Цагийн хуваарь болон өдрүүд
   const weekdays = ["Даваа", "Мягмар", "Лхагва", "Пүрэв", "Баасан"];
   const timeSlots = [
     "08:50 - 10:10",
@@ -44,108 +49,130 @@ const Home = async () => {
     "14:00 - 15:20",
   ];
 
-  // 📝 Цагийн хуваарьт хичээлийг харуулах функц
   const getLessonForTimeSlot = (day: string, slot: string) => {
-    const startTime = slot.split(" - ")[0]; // "8:50" гэх мэт
+    const startTime = slot.split(" - ")[0];
     const entry = timetableData.find(
       (entry) => entry.weekdays === day && entry.start_time === startTime
     );
-    return entry ? entry.lesson.lesson_name : "Хичээл байхгүй";
+    return entry ? entry.lesson.lesson_name : "-";
   };
 
   return (
-    <div className="p-10 bg-gray-100 min-h-screen">
-      {/* ✅ Dashboard Wrapper */}
-      <div className="max-w-6xl mx-auto space-y-8">
-        {/* 🎉 Header Section */}
-        <div className="flex items-center space-x-4">
-          <img
-            src={user.image || "/images/default-avatar.png"}
-            alt="User Profile"
-            className="w-20 h-20 rounded-full border border-gray-300"
-          />
-          <div>
-            <h1 className="text-3xl font-bold">Сайн байна уу, {user.name}!</h1>
-            <p className="text-gray-500">
+    <div className="bg-[#0f181e] min-h-screen py-10 px-4 md:px-10 font-sans text-[#d6faff]">
+      <h1 className="text-3xl font-bold text-center  bg-[#13272e] text-white py-4 rounded-xl shadow-sm">
+        Нүүр хуудас
+      </h1>
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-8 mt-5">
+        {/* Profile and Stats */}
+        <div className="lg:col-span-1 space-y-6">
+          <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg text-center">
+            <img
+              src={user.image || "/images/default-avatar.png"}
+              alt="User"
+              className="w-24 h-24 mx-auto rounded-full border-4 border-[#24ffa5] shadow-sm"
+            />
+            <h2 className="text-xl font-bold mt-4 text-white">{user.name}</h2>
+            <p className="text-[#24ffa5] font-medium capitalize">
               {user.role === "teacher"
                 ? "Багш"
                 : user.role === "student"
-                ? "Оюутан"
+                ? `Оюутан`
                 : "Админ"}
             </p>
-          </div>
-        </div>
-
-        {/* 📚 Хичээлийн мэдээлэл */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold">Хичээлүүд</h2>
-            <p className="text-gray-500">
-              Та нийт {timetableData.length} хичээлтэй байна.
+            <p className="text-gray-400 text-sm mt-1">
+              Курс: {user.school_year || "-"}
             </p>
           </div>
 
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold">Эрх</h2>
-            <p className="text-gray-500">
-              {user.role === "teacher" ? "Багш" : "Оюутан"}
-            </p>
+          <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg">
+            <h3 className="font-semibold text-[#d6faff] mb-2 text-center text-lg">
+              Тойм
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-sm text-[#d6faff]">
+              <div className="bg-[#0f181e] rounded-xl p-4 shadow-inner text-center border border-[#24ffa530]">
+                <p className="text-2xl font-bold text-[#24ffa5]">
+                  {timetableData.length}
+                </p>
+                <p className="text-gray-400">Хичээл</p>
+              </div>
+              <div className="bg-[#0f181e] rounded-xl p-4 shadow-inner text-center border border-[#24ffa530]">
+                <p className="text-2xl font-bold text-[#24ffa5]">
+                  {new Set(timetableData.map((x) => x.weekdays)).size}
+                </p>
+                <p className="text-gray-400">Өдөр</p>
+              </div>
+            </div>
           </div>
 
-          <div className="bg-white p-4 rounded-lg shadow-md">
-            <h2 className="text-lg font-bold">Курс</h2>
-            <p className="text-gray-500">{user.school_year || "Хоосон"}</p>
-          </div>
-        </div>
-
-        {/* 📅 Хичээлийн хуваарь */}
-        <div className="p-4 bg-white shadow-md rounded-lg">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            {user.role === "teacher"
-              ? "Багшийн Хуваарь"
-              : "Оюутны Хуваарь (Курс " + user.school_year + ")"}
-          </h2>
-          {timetableData.length === 0 ? (
-            <p className="text-center text-red-500">Мэдээлэл олдсонгүй</p>
-          ) : (
-            <table className="w-full border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-blue-200 text-gray-700">
-                  <th className="border px-4 py-2">Цаг</th>
-                  {weekdays.map((day) => (
-                    <th key={day} className="border px-4 py-2 bg-pink-300">
-                      {day}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {timeSlots.map((slot) => (
-                  <tr key={slot} className="hover:bg-gray-50">
-                    <td className="border px-4 py-2 bg-blue-100">{slot}</td>
-                    {weekdays.map((day) => (
-                      <td
-                        key={`${day}-${slot}`}
-                        className="border px-4 py-2 bg-pink-100 text-center"
-                      >
-                        {getLessonForTimeSlot(day, slot)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          {closestSchedule && (
+            <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg">
+              <h3 className="font-semibold text-[#d6faff] mb-2 text-center text-lg">
+                🗓️ Тун удахгүй болох үйл явдал
+              </h3>
+              <p className="text-[#24ffa5] text-center font-bold text-md">
+                {closestSchedule.event}
+              </p>
+              <p className="text-center text-gray-400 text-sm mt-1">
+                {new Date(closestSchedule.date).toLocaleDateString("mn-MN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </p>
+            </div>
           )}
         </div>
 
-        {/* 📝 Сүүлийн үйл ажиллагаа */}
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h2 className="text-lg font-bold">Сүүлийн үйл ажиллагаа</h2>
-          <ul className="list-disc ml-5 text-gray-500">
-            <li>Хичээл AI-д шинэ материал нэмэгдсэн.</li>
-            <li>Системд амжилттай нэвтэрсэн.</li>
-            <li>Багшийн хуваарь шинэчлэгдсэн.</li>
-          </ul>
+        {/* Schedule */}
+        <div className="lg:col-span-2 bg-[#13272e] p-6 rounded-2xl shadow-xl">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold text-[#24ffa5]">
+              {user.role === "teacher"
+                ? "Хичээлийн хуваарь (Багш)"
+                : `Хичээлийн хуваарь  ${user.school_year}-5`}
+            </h2>
+            <span className="text-sm text-gray-400">Хичээлүүд</span>
+          </div>
+          {timetableData.length === 0 ? (
+            <p className="text-center text-red-500">Мэдээлэл олдсонгүй</p>
+          ) : (
+            <div className="overflow-x-auto rounded-lg border border-[#24ffa530]">
+              <table className="min-w-full text-sm text-[#d6faff]">
+                <thead className="bg-[#0f181e]">
+                  <tr>
+                    <th className="py-3 px-4 text-left border-b border-[#24ffa530]">
+                      Цаг
+                    </th>
+                    {weekdays.map((day) => (
+                      <th
+                        key={day}
+                        className="py-3 px-4 text-center border-b border-[#24ffa530]"
+                      >
+                        {day}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {timeSlots.map((slot) => (
+                    <tr key={slot} className="even:bg-[#0f181e]">
+                      <td className="py-2 px-4 font-medium border-t border-[#24ffa530] bg-[#0f181e] text-white">
+                        {slot}
+                      </td>
+                      {weekdays.map((day) => (
+                        <td
+                          key={`${day}-${slot}`}
+                          className="py-2 px-4 text-center border-t border-[#24ffa530]"
+                        >
+                          {getLessonForTimeSlot(day, slot)}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </div>
