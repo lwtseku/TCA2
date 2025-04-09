@@ -72,7 +72,7 @@ const LessonsPage = () => {
   };
 
   return (
-    <div className="p-6 md:p-12 bg-gray-100 min-h-screen">
+    <div className="p-6 md:p-12 bg-gray-100 min-h-screen max-w-screen-xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <Button variant="outline" onClick={() => router.back()}>
           ← Буцах
@@ -80,13 +80,12 @@ const LessonsPage = () => {
         <h1 className="text-3xl font-bold text-center text-gray-800">
           📚 Хичээлийн жагсаалт
         </h1>
-        <div className="w-24" /> {/* space filler */}
+        <div className="w-24" />
       </div>
 
-      {/* Хичээлийн жагсаалт */}
-      <div className="overflow-x-auto bg-white shadow-xl rounded-xl p-6 mb-12">
-        <table className="w-full border-collapse text-sm md:text-base">
-          <thead className="bg-gray-200 text-gray-700">
+      <div className="overflow-x-auto bg-white shadow-xl rounded-2xl p-8 mb-12">
+        <table className="w-full border-collapse text-sm md:text-base table-auto">
+          <thead className="bg-gray-100 text-gray-800 text-sm uppercase tracking-wide">
             <tr>
               <th className="border px-4 py-2 text-left">Код</th>
               <th className="border px-4 py-2 text-left">Нэр</th>
@@ -97,7 +96,7 @@ const LessonsPage = () => {
           </thead>
           <tbody>
             {lessons.map((lesson) => (
-              <tr key={lesson.id} className="hover:bg-gray-100 transition">
+              <tr key={lesson.id} className="hover:bg-gray-50 transition">
                 <td className="border px-4 py-2">{lesson.lesson_code}</td>
                 <td className="border px-4 py-2">{lesson.lesson_name}</td>
                 <td className="border px-4 py-2">{lesson.credits}</td>
@@ -124,12 +123,11 @@ const LessonsPage = () => {
         </table>
       </div>
 
-      {/* Шинэ хичээл нэмэх */}
-      <div className="bg-white p-6 rounded-xl shadow-md mb-8">
+      <div className="bg-white p-8 rounded-2xl shadow-lg mb-12 max-w-4xl mx-auto">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">
           ➕ Шинэ хичээл нэмэх
         </h2>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Input
             value={newLesson.lesson_code}
             onChange={(e) =>
@@ -147,7 +145,10 @@ const LessonsPage = () => {
           <Input
             value={newLesson.credits}
             onChange={(e) =>
-              setNewLesson({ ...newLesson, credits: parseInt(e.target.value) })
+              setNewLesson({
+                ...newLesson,
+                credits: parseInt(e.target.value),
+              })
             }
             placeholder="Кредит"
             type="number"
@@ -176,24 +177,29 @@ const LessonsPage = () => {
         </div>
       </div>
 
-      {/* Хичээл засах хэсэг */}
       {editLesson && (
-        <div className="bg-white p-6 rounded-xl shadow-md">
+        <div className="bg-white p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
           <h2 className="text-xl font-semibold mb-4 text-gray-800">
             ✏️ Хичээл засах
           </h2>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
               value={editLesson.lesson_code}
               onChange={(e) =>
-                setEditLesson({ ...editLesson, lesson_code: e.target.value })
+                setEditLesson({
+                  ...editLesson,
+                  lesson_code: e.target.value,
+                })
               }
               placeholder="Хичээлийн код"
             />
             <Input
               value={editLesson.lesson_name}
               onChange={(e) =>
-                setEditLesson({ ...editLesson, lesson_name: e.target.value })
+                setEditLesson({
+                  ...editLesson,
+                  lesson_name: e.target.value,
+                })
               }
               placeholder="Хичээлийн нэр"
             />
@@ -211,7 +217,10 @@ const LessonsPage = () => {
             <Input
               value={editLesson.teacher_id}
               onChange={(e) =>
-                setEditLesson({ ...editLesson, teacher_id: e.target.value })
+                setEditLesson({
+                  ...editLesson,
+                  teacher_id: e.target.value,
+                })
               }
               placeholder="Багшийн ID"
             />
@@ -219,12 +228,15 @@ const LessonsPage = () => {
               <Input
                 value={editLesson.description}
                 onChange={(e) =>
-                  setEditLesson({ ...editLesson, description: e.target.value })
+                  setEditLesson({
+                    ...editLesson,
+                    description: e.target.value,
+                  })
                 }
                 placeholder="Тайлбар"
               />
             </div>
-            <div className="md:col-span-2 flex gap-2">
+            <div className="md:col-span-2 flex gap-4">
               <Button onClick={handleEditLesson} className="w-full">
                 Хадгалах
               </Button>

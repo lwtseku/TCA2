@@ -1,79 +1,96 @@
 import { auth } from "@/lib/auth";
 import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation"; // Helper to handle 404 errors if the record is not found
-import Lesson from "../../page";
+import { redirect } from "next/navigation";
 
-// Initialize Prisma client
 const prisma = new PrismaClient();
 
-// Server component: Fetch the lesson data based on the lesson_code from the URL
 const LessonView = async ({ params }: { params: { lessonId: string } }) => {
   const session = await auth();
   if (!session) redirect("/sign-in");
+
   const { lessonId } = await params;
 
   const addLesson = await prisma.lesson_list.findUnique({
     where: { lesson_code: lessonId },
   });
+
   const TeacherlessonList = await prisma.lesson.findMany({
     where: {
       lessonCode: lessonId,
-      teacherId: session?.user.user_id, // Use the lesson_code from the URL
+      teacherId: session?.user.user_id,
     },
   });
+
   const StudentlessonList = await prisma.lesson.findMany({
     where: {
       lessonCode: lessonId,
-      school_year: session?.user.school_year, // Use the lesson_code from the URL
+      school_year: session?.user.school_year,
     },
   });
 
-  // If lesson is not found, return a 404 page
+  const lessonsToShow =
+    session.user.role === "teacher" ? TeacherlessonList : StudentlessonList;
+  const isTeacher = session.user.role === "teacher";
 
   return (
-    <div className="p-8 min-h-screen w-full space-y-4">
-      {session.user.role === "teacher" && TeacherlessonList.length > 0 ? (
-        <>
-          <h1 className="text-3xl font-bold mb-6">Teacher's Lesson List</h1>
-          {TeacherlessonList.map((lesson) => (
-            <div key={lesson.id}>
-              <Link
-                href={`/lesson/view/${lesson.lessonCode}/${lesson.id}`}
-                className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-100 transition"
-              >
-                <h3 className="text-xl font-semibol d">{lesson.title}</h3>
-                <p className="text-gray-600">
-                  {lesson.description || "No description available"}
-                </p>
-              </Link>
-            </div>
-          ))}
-          <button>
-            <Link href={`/lesson/view/add/${addLesson?.lesson_code}`}>
-              Нэмэх
+    <div className="p-8 min-h-screen w-full space-y-6 bg-[#283131]">
+      <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-[#3ef4cb] to-[#2dc2bd] shadow-md text-[#293536] py-4 rounded-xl shadow-sm">
+        Хичээлүүд
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {lessonsToShow.length > 0 ? (
+          lessonsToShow.map((lesson) => (
+            <Link
+              key={lesson.id}
+              href={`/lesson/view/${lesson.lessonCode}/${lesson.id}`}
+              className="group block bg-[#313f40] rounded-xl border border-[#3ef4cb] p-6 hover:shadow-xl transition-all"
+            >
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white group-hover:text-[#3ef4cb]">
+                    {lesson.title}
+                  </h3>
+                  <p className="text-sm text-gray-300 mt-1">
+                    {lesson.description || "No description available"}
+                  </p>
+                  <div className="text-sm text-[#3ef4cb] mt-2">
+                    {lesson.teacherName && `Багшийн нэр: ${lesson.teacherName}`}
+                  </div>
+                  <div className="flex gap-2 mt-2">
+                    {lesson.pdfUrl && (
+                      <span className="inline-block text-xs text-[#90cdf4] border border-[#90cdf4] px-2 py-0.5 rounded-full">
+                        📄 PDF хавсралттай
+                      </span>
+                    )}
+                    {lesson.videoUrl && (
+                      <span className="inline-block text-xs text-[#68d391] border border-[#68d391] px-2 py-0.5 rounded-full">
+                        🎬 Видео хавсралттай
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="text-[#3ef4cb] text-xl">→</div>
+              </div>
             </Link>
-          </button>
-        </>
-      ) : session.user.role === "student" && StudentlessonList.length > 0 ? (
-        <>
-          <h1 className="text-3xl font-bold mb-6">Student's Lesson List</h1>
-          {StudentlessonList.map((lesson) => (
-            <div key={lesson.id}>
-              <Link
-                href={`/lesson/view/${lesson.lessonCode}/${lesson.id}`}
-                className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-100 transition"
-              >
-                <h3 className="text-xl font-semibold">{lesson.title}</h3>
-                <p className="text-gray-600">
-                  {lesson.description || "No description available"}
-                </p>
-              </Link>
-            </div>
-          ))}
-        </>
-      ) : (
-        <p className="text-gray-500">No lessons found.</p>
+          ))
+        ) : (
+          <p className="text-center text-gray-400 col-span-full">
+            No lessons found.
+          </p>
+        )}
+      </div>
+
+      {isTeacher && (
+        <div className="mt-10 text-center">
+          <Link
+            href={`/lesson/view/add/${addLesson?.lesson_code}`}
+            className="inline-block bg-[#3ef4cb] hover:bg-[#2dc2bd] text-black font-semibold px-6 py-3 rounded-xl transition"
+          >
+            ➕ Хичээл нэмэх
+          </Link>
+        </div>
       )}
     </div>
   );

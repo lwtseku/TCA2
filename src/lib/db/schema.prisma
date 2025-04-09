@@ -8,9 +8,8 @@ datasource db {
 }
 
 model Users {
-    id      String @id @default(cuid())
-    user_id String @unique
-
+    id            String          @id @default(cuid())
+    user_id       String          @unique
     name          String
     role          Role
     school_year   Int?
@@ -28,9 +27,6 @@ model Users {
     Lesson_list Lesson_list[]
     Timetable   Timetable[]
     Lesson      Lesson[]
-    sentPosts   Post[]        @relation("TeacherRelation")
-    Reciever    Chat[]        @relation("RecievedMessages")
-    Sender      Chat[]        @relation("SentMessages")
 }
 
 model Roadmap {
@@ -176,44 +172,4 @@ model Authenticator {
     user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([userId, credentialID])
-}
-
-model Post {
-    post_id     Int      @id @default(autoincrement())
-    teacher_id  String
-    teacher     Users    @relation("TeacherRelation", fields: [teacher_id], references: [user_id], onDelete: Cascade)
-    title       String?
-    body        String?
-    created_at  DateTime @default(now())
-    school_year Int?
-}
-
-model Chat {
-    chat_id     Int      @id @default(autoincrement())
-    sender_id   String
-    sender      Users    @relation("SentMessages", fields: [sender_id], references: [user_id], onDelete: Cascade)
-    reciever_id String
-    reciever    Users    @relation("RecievedMessages", fields: [reciever_id], references: [user_id], onDelete: Cascade)
-    message     String
-    created_at  DateTime @default(now())
-}
-
-model Post {
-    post_id     Int      @id @default(autoincrement())
-    teacher_id  String
-    teacher     Users    @relation("TeacherRelation", fields: [teacher_id], references: [user_id], onDelete: Cascade)
-    title       String?
-    body        String?
-    created_at  DateTime @default(now())
-    school_year Int?
-}
-
-model Chat {
-    chat_id     Int      @id @default(autoincrement())
-    sender_id   String
-    sender      Users    @relation("SentMessages", fields: [sender_id], references: [user_id], onDelete: Cascade)
-    reciever_id String
-    reciever    Users    @relation("RecievedMessages", fields: [reciever_id], references: [user_id], onDelete: Cascade)
-    message     String
-    created_at  DateTime @default(now())
 }

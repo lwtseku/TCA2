@@ -64,57 +64,69 @@ export default function UploadLessonClient({
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 space-y-6">
-      <h1 className="text-2xl font-bold">Upload Lesson</h1>
+    <div className="max-w-2xl mx-auto mt-10 bg-[#313f40] border border-[#3ef4cb] rounded-xl p-8 text-white shadow-xl">
+      <h1 className="text-2xl font-bold text-center mb-6 text-[#3ef4cb]">
+        Хичээл нэмэх
+      </h1>
       <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
-          placeholder="Lesson Title"
+          placeholder="Хичээлийн нэр"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 rounded-md bg-[#243b4a] text-white border border-[#3ef4cb] focus:outline-none focus:ring-2 focus:ring-[#3ef4cb]"
           required
         />
         <textarea
-          placeholder="Lesson Description"
+          placeholder="Тайлбар"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 rounded-md bg-[#243b4a] text-white border border-[#3ef4cb] focus:outline-none focus:ring-2 focus:ring-[#3ef4cb]"
         />
         <input
           type="number"
-          placeholder="School Year"
+          placeholder="Курс"
           value={schoolYear ?? ""}
           onChange={(e) => setSchoolYear(Number(e.target.value))}
-          className="w-full p-2 border rounded"
+          className="w-full p-3 rounded-md bg-[#243b4a] text-white border border-[#3ef4cb] focus:outline-none focus:ring-2 focus:ring-[#3ef4cb]"
         />
         <div>
-          <label>Upload PDF:</label>
+          <label className="block mb-1">PDF хавсралт</label>
           <input
             type="file"
             accept="application/pdf"
             onChange={handlePdfChange}
+            className="w-full text-sm"
           />
           {previewPdf && (
             <embed
               src={previewPdf}
               type="application/pdf"
-              className="mt-2 w-full h-48"
+              className="mt-2 w-full h-48 rounded border border-[#3ef4cb]"
             />
           )}
         </div>
         <div>
-          <label>Upload Video:</label>
-          <input type="file" accept="video/*" onChange={handleVideoChange} />
+          <label className="block mb-1">Видео хавсралт</label>
+          <input
+            type="file"
+            accept="video/*"
+            onChange={handleVideoChange}
+            className="w-full text-sm"
+          />
           {previewVideo && (
-            <video src={previewVideo} controls className="mt-2 w-full h-48" />
+            <video
+              src={previewVideo}
+              controls
+              className="mt-2 w-full h-48 rounded border border-[#3ef4cb]"
+            />
           )}
         </div>
         <button
           type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded"
+          className="w-full py-3 mt-4 bg-[#3ef4cb] hover:bg-[#2dc2bd] text-black font-semibold rounded-lg transition"
         >
-          Upload
+          ➕ Хичээл нэмэх
         </button>
       </form>
     </div>

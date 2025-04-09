@@ -62,12 +62,5 @@ export const NavItems = () => {
       active: isNavItemActive(pathname, "/assignment"),
       position: "top",
     },
-    {
-      name: "Тохиргоо",
-      href: "/settings",
-      icon: <Settings size={20} />,
-      active: isNavItemActive(pathname, "/settings"),
-      position: "bottom",
-    },
   ];
 };

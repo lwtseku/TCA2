@@ -2,6 +2,7 @@ import React from "react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { SignOut } from "@/components/sign-out";
 
 const SignUpPage = async () => {
   const session = await auth();
@@ -47,6 +48,7 @@ const SignUpPage = async () => {
           </div>
         </Link>
       </div>
+      <SignOut />
     </div>
   );
 };
