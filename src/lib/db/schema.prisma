@@ -27,6 +27,42 @@ model Users {
     Lesson_list Lesson_list[]
     Timetable   Timetable[]
     Lesson      Lesson[]
+    Assignment  Assignment[]
+
+    // ✨ ШИНЭ нэмэлтүүд:
+    submissionsAsStudent Submission[] @relation("StudentSubmission")
+    submissionsAsTeacher Submission[] @relation("TeacherSubmission")
+    sentPosts            Post[]       @relation("TeacherRelation")
+    Reciever             Chat[]       @relation("RecievedMessages")
+    Sender               Chat[]       @relation("SentMessages")
+}
+
+model Assignment {
+    id          String   @id @default(cuid())
+    title       String
+    description String
+    fileUrl     String?
+    course      Int
+    teacherId   String
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+
+    teacher     Users        @relation(fields: [teacherId], references: [user_id])
+    submissions Submission[] // ✨ нэмсэн
+}
+
+model Submission {
+    id           String   @id @default(cuid())
+    assignmentId String
+    studentId    String
+    teacherId    String
+    fileUrl      String
+    score        Int? // 👈 Нэмэгдсэн талбар
+    createdAt    DateTime @default(now())
+
+    assignment Assignment @relation(fields: [assignmentId], references: [id])
+    student    Users      @relation(name: "StudentSubmission", fields: [studentId], references: [user_id])
+    teacher    Users      @relation(name: "TeacherSubmission", fields: [teacherId], references: [user_id])
 }
 
 model Roadmap {
@@ -172,4 +208,24 @@ model Authenticator {
     user Users @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@id([userId, credentialID])
+}
+
+model Post {
+    post_id     Int      @id @default(autoincrement())
+    teacher_id  String
+    teacher     Users    @relation("TeacherRelation", fields: [teacher_id], references: [user_id], onDelete: Cascade)
+    title       String?
+    body        String?
+    created_at  DateTime @default(now())
+    school_year Int?
+}
+
+model Chat {
+    chat_id     Int      @id @default(autoincrement())
+    sender_id   String
+    sender      Users    @relation("SentMessages", fields: [sender_id], references: [user_id], onDelete: Cascade)
+    reciever_id String
+    reciever    Users    @relation("RecievedMessages", fields: [reciever_id], references: [user_id], onDelete: Cascade)
+    message     String
+    created_at  DateTime @default(now())
 }
