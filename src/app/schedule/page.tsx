@@ -14,21 +14,21 @@ interface MonthGroup {
 }
 
 const monthNames = [
-  "Нэг дүгээр сар",
-  "Хоёр дугаар сар",
-  "Гурав  дугаар сар",
-  "Дөрөв дүгээр сар",
-  "Тав дугаар сар",
-  "Зургаа дугаар сар",
-  "Долоо дугаар сар",
-  "Найм дугаар сар",
-  "Ес дүгээр сар",
-  "Арав дугаар сар",
-  "Арван нэг дүгээр сар",
-  "Арван хоёрдугаар сар",
+  "1-р сар",
+  "2-р сар",
+  "3-р сар",
+  "4-р сар",
+  "5-р сар",
+  "6-р сар",
+  "7-р сар",
+  "8-р сар",
+  "9-р сар",
+  "10-р сар",
+  "11-р сар",
+  "12-р сар",
 ];
 
-const PREVIEW_COUNT = 2; // Эхний харагдах тоо
+const PREVIEW_COUNT = 2;
 
 const UserSchedulePage = () => {
   const [scheduleGroups, setScheduleGroups] = useState<MonthGroup[]>([]);
@@ -55,17 +55,17 @@ const UserSchedulePage = () => {
   };
 
   return (
-    <div className="max-w-full mx-auto p-6">
-      <h2 className="text-4xl font-bold text-center text-gray-800 mb-8">
+    <div className="bg-[#283131] min-h-screen py-10 px-4 md:px-10 font-sans text-[#d6faff]">
+      <h1 className="text-3xl font-bold text-center bg-[#13272e] text-white py-4 rounded-xl shadow-sm mb-5">
         Жилийн хуанли
-      </h2>
+      </h1>
 
       {loading ? (
-        <div className="flex justify-center">
-          <span className="text-lg text-gray-500">Уншиж байна...</span>
+        <div className="flex justify-center mt-5">
+          <span className="text-lg text-gray-400">Уншиж байна...</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {scheduleGroups.map((group, monthIndex) => {
             const isExpanded = expanded[monthIndex];
             const schedulesToShow = isExpanded
@@ -75,13 +75,13 @@ const UserSchedulePage = () => {
             return (
               <div
                 key={group.month}
-                className="bg-white rounded-xl shadow-lg overflow-hidden"
+                className="bg-[#13272e] rounded-2xl shadow-xl border border-[#24ffa530] overflow-hidden flex flex-col justify-between"
               >
-                <div className="bg-gray-800 text-white p-4 font-semibold text-lg">
+                <div className="bg-[#0f181e] text-white px-4 py-3 font-semibold text-lg border-b border-[#24ffa530]">
                   {monthNames[group.month - 1]}
                 </div>
 
-                <ul className="divide-y px-4 py-4">
+                <ul className="divide-y divide-[#24ffa520] px-4 py-4 flex-1">
                   {schedulesToShow.length > 0 ? (
                     schedulesToShow.map((schedule) => {
                       const date = new Date(schedule.date);
@@ -90,13 +90,13 @@ const UserSchedulePage = () => {
                       return (
                         <li
                           key={schedule.id}
-                          className="py-3 flex justify-between items-center"
+                          className="py-3 flex justify-between items-start"
                         >
                           <div>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-gray-400">
                               {day}-ны өдөр
                             </p>
-                            <p className="font-medium text-gray-800">
+                            <p className="font-medium text-[#24ffa5]">
                               {schedule.event}
                             </p>
                           </div>
@@ -104,20 +104,19 @@ const UserSchedulePage = () => {
                       );
                     })
                   ) : (
-                    <li className="text-gray-400 italic py-3">
+                    <li className="text-gray-500 italic py-3">
                       Тухайн сард үйл явдал байхгүй
                     </li>
                   )}
                 </ul>
 
-                {/* Илүү ихийг үзэх / Буцаах товч */}
                 {group.schedules.length > PREVIEW_COUNT && (
-                  <div className="text-center mt-4 pb-4">
+                  <div className="text-center mt-auto pb-4">
                     <button
                       onClick={() => toggleExpand(monthIndex)}
-                      className="bg-gray-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-gray-700 transition-all"
+                      className="bg-[#24ffa5] text-[#0f181e] py-2 px-4 rounded-xl text-sm font-semibold hover:bg-[#20e699] transition-all"
                     >
-                      {isExpanded ? "буцах" : "Илүү ихийг үзэх"}
+                      {isExpanded ? "Буцаах" : "Илүү ихийг үзэх"}
                     </button>
                   </div>
                 )}

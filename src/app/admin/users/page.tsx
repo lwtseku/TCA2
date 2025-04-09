@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 
 const UserManagementPage = () => {
@@ -71,45 +70,55 @@ const UserManagementPage = () => {
   };
 
   return (
-    <div className="p-10 bg-gray-100 min-h-screen">
-      <div className="mb-4">
-        <Button variant="outline" onClick={() => router.back()}>
-          Буцах
-        </Button>
-      </div>
+    <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] text-white py-12 px-8">
+      <div className="w-full max-w-6xl mx-auto">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-8 gap-4">
+          <Button
+            variant="outline"
+            onClick={() => router.back()}
+            className="border-[#24ffa5] text-black hover:bg-white"
+          >
+            ← Буцах
+          </Button>
+          <h1 className="text-4xl font-bold text-[#24ffa5] text-center w-full">
+            👤 Хэрэглэгчийн удирдлага
+          </h1>
+          <div className="w-24" />
+        </div>
 
-      <h1 className="text-3xl font-bold text-center mb-8">
-        Хэрэглэгчийн удирдлага
-      </h1>
-
-      {/* Хэрэглэгчдийн жагсаалт */}
-      <Card className="mb-8 shadow-md">
-        <CardContent className="p-6 overflow-x-auto">
-          <table className="table-auto w-full border-collapse">
-            <thead className="bg-blue-600 text-white">
+        {/* User Table */}
+        <div className="bg-[#13272e] divide-[#24ffa520] p-6 shadow-xl rounded-xl mb-12 w-full">
+          <table className="w-full border-collapse text-sm">
+            <thead className="text-[#24ffa5] border-b border-[#24ffa520]">
               <tr>
-                <th className="border px-4 py-2">Код</th>
-                <th className="border px-4 py-2">Нэр</th>
-                <th className="border px-4 py-2">Имэйл</th>
-                <th className="border px-4 py-2">Үүрэг</th>
-                <th className="border px-4 py-2">Төгсөх жил</th>
-                <th className="border px-4 py-2">Үйлдэл</th>
+                <th className="px-4 py-3 text-left">Код</th>
+                <th className="px-4 py-3 text-left">Нэр</th>
+                <th className="px-4 py-3 text-left">Имэйл</th>
+                <th className="px-4 py-3 text-left">Үүрэг</th>
+                <th className="px-4 py-3 text-left">Төгсөх жил</th>
+                <th className="px-4 py-3 text-center">Үйлдэл</th>
               </tr>
             </thead>
             <tbody>
               {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-100">
-                  <td className="border px-4 py-2">{user.user_id}</td>
-                  <td className="border px-4 py-2">{user.name}</td>
-                  <td className="border px-4 py-2">{user.email}</td>
-                  <td className="border px-4 py-2 capitalize">{user.role}</td>
-                  <td className="border px-4 py-2">{user.school_year}</td>
-                  <td className="border px-4 py-2 text-center">
-                    <Button variant="outline" onClick={() => setEditUser(user)}>
+                <tr key={user.id} className="hover:bg-[#24ffa520] transition">
+                  <td className="px-4 py-3">{user.user_id}</td>
+                  <td className="px-4 py-3">{user.name}</td>
+                  <td className="px-4 py-3">{user.email}</td>
+                  <td className="px-4 py-3 capitalize">{user.role}</td>
+                  <td className="px-4 py-3">{user.school_year}</td>
+                  <td className="px-4 py-3 text-center space-x-2">
+                    <Button
+                      size="sm"
+                      onClick={() => setEditUser(user)}
+                      className="bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                    >
                       Засах
                     </Button>
                     <Button
-                      className="ml-2 bg-red-600 hover:bg-red-700 text-white"
+                      size="sm"
+                      variant="destructive"
                       onClick={() => handleDeleteUser(user.id)}
                     >
                       Устгах
@@ -119,15 +128,16 @@ const UserManagementPage = () => {
               ))}
             </tbody>
           </table>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Шинэ хэрэглэгч нэмэх */}
-      <Card className="mb-8 shadow-md">
-        <CardContent className="p-6 space-y-4">
-          <h2 className="text-2xl font-semibold mb-2">Шинэ хэрэглэгч нэмэх</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Add User Form */}
+        <div className="bg-[#13272e] p-6 shadow-lg rounded-xl mb-12 w-full">
+          <h2 className="text-2xl font-semibold mb-4 text-[#24ffa5] text-center">
+            ➕ Шинэ хэрэглэгч нэмэх
+          </h2>
+          <div className="grid md:grid-cols-2 gap-4">
             <Input
+              className="bg-[#0f181e] border-[#24ffa520] text-white"
               value={newUser.user_id}
               onChange={(e) =>
                 setNewUser({ ...newUser, user_id: e.target.value })
@@ -135,11 +145,13 @@ const UserManagementPage = () => {
               placeholder="Хэрэглэгчийн ID"
             />
             <Input
+              className="bg-[#0f181e] border-[#24ffa520] text-white"
               value={newUser.name}
               onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
               placeholder="Нэр"
             />
             <Input
+              className="bg-[#0f181e] border-[#24ffa520] text-white"
               value={newUser.email}
               onChange={(e) =>
                 setNewUser({ ...newUser, email: e.target.value })
@@ -147,20 +159,24 @@ const UserManagementPage = () => {
               placeholder="Имэйл"
             />
             <Input
+              className="bg-[#0f181e] border-[#24ffa520] text-white"
               value={newUser.password}
               onChange={(e) =>
                 setNewUser({ ...newUser, password: e.target.value })
               }
-              placeholder="Нууц үг"
               type="password"
+              placeholder="Нууц үг"
             />
             <Input
+              className="bg-[#0f181e] border-[#24ffa520] text-white"
               value={newUser.role}
               onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
               placeholder="Үүрэг (admin/teacher/student)"
             />
             <Input
+              className="bg-[#0f181e] border-[#24ffa520] text-white"
               value={newUser.school_year}
+              type="number"
               onChange={(e) =>
                 setNewUser({
                   ...newUser,
@@ -168,21 +184,32 @@ const UserManagementPage = () => {
                 })
               }
               placeholder="Төгсөх жил"
-              type="number"
             />
+            <div className="md:col-span-2">
+              <Button
+                onClick={handleAddUser}
+                className="w-full bg-[#24ffa5] hover:bg-[#1de194] text-black"
+              >
+                Нэмэх
+              </Button>
+            </div>
           </div>
-          <Button onClick={handleAddUser}>Нэмэх</Button>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Засах */}
-      {editUser && (
-        <Card className="mb-8 shadow-md">
-          <CardContent className="p-6 space-y-4">
-            <h2 className="text-2xl font-semibold mb-2">Засах</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input value={editUser.user_id} disabled placeholder="ID" />
+        {/* Edit User Form */}
+        {editUser && (
+          <div className="bg-[#13272e] fixed inset-0 z-50 m-auto max-w-screen-md backdrop-blur-md p-6 shadow-lg rounded-xl overflow-y-auto text-white">
+            <h2 className="text-2xl font-semibold mb-4 text-[#24ffa5] text-center">
+              ✏️ Хэрэглэгч засах
+            </h2>
+            <div className="grid md:grid-cols-2 gap-4">
               <Input
+                className="bg-[#0f181e] text-white"
+                value={editUser.user_id}
+                disabled
+              />
+              <Input
+                className="bg-[#0f181e] border-[#24ffa520] text-white"
                 value={editUser.name}
                 onChange={(e) =>
                   setEditUser({ ...editUser, name: e.target.value })
@@ -190,6 +217,7 @@ const UserManagementPage = () => {
                 placeholder="Нэр"
               />
               <Input
+                className="bg-[#0f181e] border-[#24ffa520] text-white"
                 value={editUser.email}
                 onChange={(e) =>
                   setEditUser({ ...editUser, email: e.target.value })
@@ -197,6 +225,7 @@ const UserManagementPage = () => {
                 placeholder="Имэйл"
               />
               <Input
+                className="bg-[#0f181e] border-[#24ffa520] text-white"
                 value={editUser.role}
                 onChange={(e) =>
                   setEditUser({ ...editUser, role: e.target.value })
@@ -204,6 +233,8 @@ const UserManagementPage = () => {
                 placeholder="Үүрэг"
               />
               <Input
+                className="bg-[#0f181e] border-[#24ffa520] text-white"
+                type="number"
                 value={editUser.school_year}
                 onChange={(e) =>
                   setEditUser({
@@ -212,13 +243,26 @@ const UserManagementPage = () => {
                   })
                 }
                 placeholder="Төгсөх жил"
-                type="number"
               />
+              <div className="md:col-span-2 flex gap-2">
+                <Button
+                  onClick={handleEditUser}
+                  className="w-full bg-[#24ffa5] hover:bg-[#1de194] text-black"
+                >
+                  Хадгалах
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setEditUser(null)}
+                  className="w-full border-[#24ffa5] text-[#24ffa5] hover:bg-[#0f181e]"
+                >
+                  Цуцлах
+                </Button>
+              </div>
             </div>
-            <Button onClick={handleEditUser}>Хадгалах</Button>
-          </CardContent>
-        </Card>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
