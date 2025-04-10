@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function StudentPostPage({
   params,
@@ -9,13 +10,13 @@ export default async function StudentPostPage({
 }) {
   const session = await auth();
   if (!session || !session.user) {
-    redirect("/auth/sign-in");
+    redirect("/sign-in");
   }
 
   const email = session.user.email!;
   const currentUser = await prisma.users.findUnique({ where: { email } });
   if (!currentUser) {
-    redirect("/auth/sign-in");
+    redirect("/sign-in");
   }
 
   const selectedButton =
@@ -41,16 +42,22 @@ export default async function StudentPostPage({
     <div className="flex flex-col mt-3 mb-5 w-full h-screen border-b rounded-md border-[#6be4b9] bg-[#1e2627] overflow-hidden">
       {/* Top Navigation */}
       <div className="flex w-full h-12 bg-[#313f40] border border-[#6be4b9] mb-1 rounded-sm">
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href={selectedButton}>Нийтлэл</a>
-        </button>
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href={`/communicate/${selectedTeacherId}`}>Мессеж</a>
-        </button>
+        <Link
+          href={selectedButton}
+          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
+        >
+          Нийтлэл
+        </Link>
+        <Link
+          href={`/communicate/${selectedTeacherId}`}
+          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
+        >
+          Мессеж
+        </Link>
       </div>
 
       {/* User Info */}
-      <div className="mt-3 flex justify-start space-x-3 items-center px-8 ">
+      <div className="mt-3 flex justify-start space-x-3 items-center px-8">
         <img
           src="https://png.pngtree.com/png-vector/20220210/ourmid/pngtree-avatar-bussinesman-man-profile-icon-vector-illustration-png-image_4384273.png"
           alt="User Profile"
@@ -73,7 +80,7 @@ export default async function StudentPostPage({
           <ul className="space-y-2">
             {teachers.map((teacher) => (
               <li key={teacher.user_id}>
-                <a
+                <Link
                   href={`/communicate/${teacher.user_id}`}
                   className={`p-3 flex justify-center text-lg font-semibold rounded ${
                     selectedTeacherId === teacher.user_id
@@ -82,14 +89,14 @@ export default async function StudentPostPage({
                   }`}
                 >
                   {teacher.name}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
         </div>
 
         {/* Posts */}
-        <div className=" shadow-md shadow-[#6be4b9] border border-[#6be4b9] w-9/12 h-full flex flex-col rounded-lg mt-5 ml-2">
+        <div className="shadow-md shadow-[#6be4b9] border border-[#6be4b9] w-9/12 h-full flex flex-col rounded-lg mt-5 ml-2">
           {/* Header area */}
           <div className="m-3 p-2 w-auto rounded-lg mb-4 flex items-center bg-[#6be4b9] space-x-4">
             <img
@@ -97,7 +104,7 @@ export default async function StudentPostPage({
               alt="User Profile"
               className="w-10 h-10 rounded-full border border-purple-500 shadow-md"
             />
-            <h1 className="font-bold text-gray-800 text-xl ">
+            <h1 className="font-bold text-gray-800 text-xl">
               {currentUser.name}
             </h1>
           </div>

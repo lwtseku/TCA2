@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function PostPage({
   searchParams,
@@ -8,14 +9,14 @@ export default async function PostPage({
   searchParams: { year?: string };
 }) {
   const session = await auth();
-  if (!session || !session.user) redirect("/auth/sign-in");
+  if (!session || !session.user) redirect("/sign-in");
 
   const email = session.user.email!;
   const currentUser = await prisma.users.findUnique({ where: { email } });
-  if (!currentUser) redirect("/auth/sign-in");
+  if (!currentUser) redirect("/sign-in");
 
   const schoolYears = [1, 2, 3, 4, 5];
-  const selectedYear = parseInt((await searchParams.year) ?? "0");
+  const selectedYear = parseInt(searchParams.year ?? "0"); // ❗️await хассан
 
   const posts =
     selectedYear > 0
@@ -34,12 +35,18 @@ export default async function PostPage({
     <div className="flex flex-col mt-3 mb-3 w-full h-screen bg-[#1e2627] overflow-y-hidden">
       {/* Navigation */}
       <div className="flex w-full bg-[#313f40] shadow-sm shadow-[#6be4b9] mb-1 rounded-sm">
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href={selectedButton}>Нийтлэл</a>
-        </button>
-        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
-          <a href="/communicate/1">Мессеж</a>
-        </button>
+        <Link
+          href={selectedButton}
+          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
+        >
+          Нийтлэл
+        </Link>
+        <Link
+          href="/communicate/1"
+          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
+        >
+          Мессеж
+        </Link>
       </div>
 
       {/* User Info */}
@@ -66,7 +73,7 @@ export default async function PostPage({
           <ul className="space-y-2">
             {schoolYears.map((year) => (
               <li key={year}>
-                <a
+                <Link
                   href={`/communicate/teacher_post?year=${year}`}
                   className={`text-lg p-3 rounded flex justify-center font-medium ${
                     selectedYear === year
@@ -75,7 +82,7 @@ export default async function PostPage({
                   }`}
                 >
                   МКТК {year}-5 анги
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -88,7 +95,7 @@ export default async function PostPage({
             {selectedYear > 0 && (
               <>
                 {posts.length === 0 ? (
-                  <p className="text-gray-400 ">Одоогоор пост алга байна.</p>
+                  <p className="text-gray-400">Одоогоор пост алга байна.</p>
                 ) : (
                   posts.map((post, index) => (
                     <div
@@ -108,13 +115,13 @@ export default async function PostPage({
             )}
           </div>
 
-          {/* Form - always visible */}
+          {/* Form */}
           {selectedYear > 0 && (
             <form
               id="post-form"
               className="sticky bottom-0 mt-3 space-y-3 p-1 rounded-md"
             >
-              <div className="flex flex-row ">
+              <div className="flex flex-row">
                 <input type="hidden" name="school_year" value={selectedYear} />
                 <input
                   type="text"
@@ -141,14 +148,14 @@ export default async function PostPage({
         </div>
       </div>
 
-      {/* Client-side form handler */}
+      {/* Client-side script */}
       <script
         dangerouslySetInnerHTML={{
           __html: `
             document.addEventListener("DOMContentLoaded", function () {
               const form = document.getElementById("post-form");
               if (!form) return;
- 
+
               form.addEventListener("submit", function (e) {
                 e.preventDefault();
                 const formData = new FormData(form);
@@ -156,8 +163,8 @@ export default async function PostPage({
                   method: "POST",
                   body: formData
                 }).then(() => {
-                  form.reset();               // 🧼 Input-уудыг цэвэрлэнэ
-                  window.location.reload();   // 🔁 Хуудсыг дахин ачаална
+                  form.reset();
+                  window.location.reload();
                 });
               });
             });

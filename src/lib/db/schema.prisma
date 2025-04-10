@@ -112,13 +112,13 @@ model Lesson {
 model Timetable {
     id          Int         @id @default(autoincrement())
     lesson_code String
-    teacher_id  String
+    teacher_id  String?
     weekdays    WeekDay
     start_time  String
     end_time    String
     school_year Int // Талбарыг зөв тодорхойлж байна
     lesson      Lesson_list @relation(fields: [lesson_code], references: [lesson_code], onDelete: Cascade)
-    teacher     Users       @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
+    teacher     Users?      @relation(fields: [teacher_id], references: [user_id], onDelete: Cascade)
 }
 
 model Schedule {

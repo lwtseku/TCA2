@@ -5,6 +5,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 interface Schedule {
   id: string;
@@ -136,12 +137,13 @@ const AdminSchedulePage = () => {
       <div className="w-full max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex justify-between items-center mb-10 gap-4">
-          <button
-            onClick={() => router.back()}
-            className="bg-[#13272e] border border-[#6be4b920] px-4 py-2 rounded-md hover:bg-[#1b383f]"
+          <Button
+            variant="outline"
+            onClick={() => router.push("/sign-up")}
+            className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
           >
             ← Буцах
-          </button>
+          </Button>
           <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
             📅 Админ хуваарь удирдлага
           </h1>

@@ -8,7 +8,7 @@ const Home = async () => {
   const session = await auth();
 
   if (!session || !session.user) {
-    redirect("/auth/sign-in");
+    redirect("/sign-in");
     return null;
   }
 
@@ -17,7 +17,7 @@ const Home = async () => {
   });
 
   if (!user) {
-    redirect("/auth/sign-in");
+    redirect("/sign-in");
     return null;
   }
 
@@ -47,6 +47,7 @@ const Home = async () => {
     "10:20 - 11:40",
     "11:50 - 13:10",
     "14:00 - 15:20",
+    "15:30 - 16:50",
   ];
 
   const getLessonForTimeSlot = (day: string, slot: string) => {
