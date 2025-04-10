@@ -76,11 +76,12 @@ const UserManagementPage = () => {
         <div className="flex justify-between items-center mb-8 gap-4">
           <Button
             variant="outline"
-            onClick={() => router.back()}
+            onClick={() => router.push("/sign-up")}
             className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
           >
             ← Буцах
           </Button>
+
           <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
             👤 Хэрэглэгчийн удирдлага
           </h1>

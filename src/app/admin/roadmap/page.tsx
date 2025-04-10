@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const RoadmapPage = () => {
+  const router = useRouter();
+
   const [roadmaps, setRoadmaps] = useState<any[]>([]);
   const [newItem, setNewItem] = useState({
     lesson_code: "",
@@ -74,6 +77,13 @@ const RoadmapPage = () => {
         <h1 className="text-3xl font-bold text-center text-white border-b border-[#6be4b9] pb-4">
           📌 Roadmap Хичээлүүд
         </h1>
+        <Button
+          variant="outline"
+          onClick={() => router.push("/sign-up")}
+          className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
+        >
+          ← Буцах
+        </Button>
 
         {/* Шинэ хичээл нэмэх */}
         <div className="bg-[#13272e] p-6 rounded-xl shadow-lg">

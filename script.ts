@@ -5,6 +5,18 @@ const prisma = new PrismaClient();
 async function createLessonList() {
   try {
     await prisma.roadmap.deleteMany();
+    const time = await prisma.users.createMany({
+      data: [
+        {
+          user_id: "mk24c120",
+          name: "Болормаа Амарсанаа",
+          role: "student",
+          school_year: 1,
+          email: "amarsanaa@gmail.com",
+          password: "1234",
+        },
+      ],
+    });
     const newLessonList = await prisma.roadmap.createMany({
       data: [
         {

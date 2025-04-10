@@ -24,7 +24,7 @@ export default async function RoadmapPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1e2627] px-4 py-16 flex flex-col items-center">
+    <div className="min-h-screen bg-[#283131] px-4 py-16 flex flex-col items-center">
       {/* Title with Gradient Background (Updated with a wider background) */}
       <h1 className="text-3xl font-extrabold text-center bg-[#313f40] text-[#6be4b9] border border-[#6be4b9] shadow-md shadow-[#6be4b9] py-4 px-8 w-full rounded-xl mb-8">
         Сургалтын агуулга

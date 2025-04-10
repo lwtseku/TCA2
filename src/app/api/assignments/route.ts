@@ -1,28 +1,65 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import prisma from "@/lib/db";
+import { writeFile } from "fs/promises";
+import path from "path";
+import { v4 as uuidv4 } from "uuid";
 
-export async function POST(req: Request) {
-  const session = await auth();
-  if (!session || session.user.role !== "teacher") {
-    return new NextResponse("Unauthorized", { status: 401 });
+// GET хэсэг
+
+export async function GET(req: NextRequest) {
+  const courseParam = req.nextUrl.searchParams.get("course");
+
+  if (!courseParam) {
+    return NextResponse.json({ error: "Missing course" }, { status: 400 });
   }
 
+  const course = parseInt(courseParam);
+
+  const assignments = await prisma.assignment.findMany({
+    where: {
+      course,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    include: {
+      teacher: {
+        select: {
+          name: true,
+          image: true,
+        },
+      },
+    },
+  });
+
+  return NextResponse.json(assignments);
+}
+
+export async function POST(req: NextRequest) {
   const formData = await req.formData();
-  const title = formData.get("title") as string;
-  const description = formData.get("description") as string;
-  const course = Number(formData.get("course"));
+
+  const title = formData.get("title")?.toString();
+  const description = formData.get("description")?.toString();
+  const course = parseInt(formData.get("course")?.toString() || "0");
+  const teacherId = formData.get("teacherId")?.toString();
   const file = formData.get("file") as File;
 
-  const fileUrl = "https://fakeupload.com/" + file.name;
+  if (!title || !description || !teacherId || !file) {
+    return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+  }
+
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const filename = `${uuidv4()}-${file.name}`;
+  const uploadPath = path.join(process.cwd(), "public", "uploads", filename);
+  await writeFile(uploadPath, buffer);
 
   const assignment = await prisma.assignment.create({
     data: {
       title,
       description,
       course,
-      fileUrl,
-      teacherId: session.user.user_id,
+      teacherId,
+      fileUrl: `/uploads/${filename}`,
     },
   });
 
