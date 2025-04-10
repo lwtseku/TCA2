@@ -8,7 +8,7 @@ const Home = async () => {
   const session = await auth();
 
   if (!session || !session.user) {
-    redirect("/sign-in");
+    redirect("/auth/sign-in");
     return null;
   }
 
