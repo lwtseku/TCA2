@@ -35,7 +35,7 @@ const Lesson = async () => {
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src="/images/lesson-thumbnail.svg"
+                  src={lesson.image ?? "/images/lesson-thumbnail.svg"}
                   alt="Lesson"
                   className="w-16 h-16"
                 />
@@ -64,7 +64,7 @@ const Lesson = async () => {
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src="/images/lesson-thumbnail.svg"
+                  src={lesson.image ?? "/images/lesson-thumbnail.svg"}
                   alt="Lesson"
                   className="w-16 h-16"
                 />

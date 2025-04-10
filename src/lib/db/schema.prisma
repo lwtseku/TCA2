@@ -78,18 +78,18 @@ model Roadmap {
 model Lesson_list {
     id String @id @default(cuid())
 
-    lesson_code String    @unique
+    lesson_code String      @unique
     lesson_name String
     credits     Int
     description String?
-    teacher     Users?    @relation(fields: [teacher_id], references: [user_id])
+    teacher     Users?      @relation(fields: [teacher_id], references: [user_id])
     teacher_id  String?
     school_year Int?
     type        TypesGP?
     semester    Semester?
-
-    Timetable Timetable[]
-    Lesson    Lesson[]
+    image       String?
+    Timetable   Timetable[]
+    Lesson      Lesson[]
 }
 
 model Lesson {
