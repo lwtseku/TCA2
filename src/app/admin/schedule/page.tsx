@@ -144,7 +144,6 @@ const AdminSchedulePage = () => {
           >
             ← Буцах
           </Button>
-
           <h1 className="text-3xl font-bold text-white text-center w-full border-b border-[#6be4b9] pb-4 mb-6">
             📅 Админ хуваарь удирдлага
           </h1>

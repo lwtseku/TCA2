@@ -29,10 +29,16 @@ const TimetablePage = () => {
   }, []);
 
   const handleAddTimetable = async () => {
+    const payload = {
+      ...newTimetable,
+      teacher_id:
+        newTimetable.teacher_id.trim() === "" ? null : newTimetable.teacher_id,
+    };
+
     const res = await fetch("/api/timetable", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newTimetable),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
@@ -48,10 +54,18 @@ const TimetablePage = () => {
   };
 
   const handleEditTimetable = async () => {
+    const payload = {
+      ...editTimetable,
+      teacher_id:
+        editTimetable.teacher_id?.trim() === ""
+          ? null
+          : editTimetable.teacher_id,
+    };
+
     const res = await fetch("/api/timetable", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editTimetable),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
@@ -104,7 +118,7 @@ const TimetablePage = () => {
                   <td className="px-4 py-3 text-[#6be4b9] font-semibold">
                     {entry.lesson?.lesson_name}
                   </td>
-                  <td className="px-4 py-3">{entry.teacher?.name}</td>
+                  <td className="px-4 py-3">{entry.teacher?.name ?? "—"}</td>
                   <td className="px-4 py-3">{entry.weekdays}</td>
                   <td className="px-4 py-3 text-center">{entry.start_time}</td>
                   <td className="px-4 py-3 text-center">{entry.end_time}</td>
@@ -154,7 +168,7 @@ const TimetablePage = () => {
               onChange={(e) =>
                 setNewTimetable({ ...newTimetable, teacher_id: e.target.value })
               }
-              placeholder="Багшийн ID"
+              placeholder="Багшийн ID (заавал биш)"
             />
             <Input
               className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
@@ -217,8 +231,14 @@ const TimetablePage = () => {
               />
               <Input
                 className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
-                value={editTimetable.teacher_id}
-                disabled
+                value={editTimetable.teacher_id ?? ""}
+                onChange={(e) =>
+                  setEditTimetable({
+                    ...editTimetable,
+                    teacher_id: e.target.value,
+                  })
+                }
+                placeholder="Багшийн ID (заавал биш)"
               />
               <Input
                 className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"

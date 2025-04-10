@@ -27,10 +27,16 @@ const LessonsPage = () => {
   }, []);
 
   const handleAddLesson = async () => {
+    const payload = {
+      ...newLesson,
+      teacher_id:
+        newLesson.teacher_id.trim() === "" ? null : newLesson.teacher_id,
+    };
+
     const res = await fetch("/api/lessons", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newLesson),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
@@ -45,10 +51,16 @@ const LessonsPage = () => {
   };
 
   const handleEditLesson = async () => {
+    const payload = {
+      ...editLesson,
+      teacher_id:
+        editLesson.teacher_id?.trim() === "" ? null : editLesson.teacher_id,
+    };
+
     const res = await fetch("/api/lessons", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(editLesson),
+      body: JSON.stringify(payload),
     });
 
     const data = await res.json();
@@ -113,7 +125,7 @@ const LessonsPage = () => {
                   </td>
                   <td className="px-4 py-2">{lesson.lesson_name}</td>
                   <td className="px-4 py-2 text-center">{lesson.credits}</td>
-                  <td className="px-4 py-2">{lesson.teacher?.name}</td>
+                  <td className="px-4 py-2">{lesson.teacher?.name ?? "—"}</td>
                   <td className="px-4 py-2 text-center space-x-2">
                     <Button
                       size="sm"
@@ -177,7 +189,7 @@ const LessonsPage = () => {
               onChange={(e) =>
                 setNewLesson({ ...newLesson, teacher_id: e.target.value })
               }
-              placeholder="Багшийн ID"
+              placeholder="Багшийн ID (заавал биш)"
             />
             <div className="md:col-span-2">
               <Input
@@ -237,11 +249,11 @@ const LessonsPage = () => {
               />
               <Input
                 className="bg-[#0f181e] text-[#e3fef3] border border-[#6be4b920] rounded-lg"
-                value={editLesson.teacher_id}
+                value={editLesson.teacher_id ?? ""}
                 onChange={(e) =>
                   setEditLesson({ ...editLesson, teacher_id: e.target.value })
                 }
-                placeholder="Багшийн ID"
+                placeholder="Багшийн ID (заавал биш)"
               />
               <div className="md:col-span-2">
                 <Input
