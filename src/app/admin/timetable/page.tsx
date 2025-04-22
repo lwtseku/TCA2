@@ -6,10 +6,28 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const TimetablePage = () => {
+  interface TimetableItem {
+    id: string;
+    lesson_code: string;
+    teacher_id: string | null;
+    weekdays: string;
+    start_time: string;
+    end_time: string;
+    school_year: number;
+    teacher?: {
+      name: string;
+    };
+    lesson?: {
+      lesson_name: string;
+    };
+  }
+
   const router = useRouter();
 
-  const [timetable, setTimetable] = useState<any[]>([]);
-  const [newTimetable, setNewTimetable] = useState({
+  const [timetable, setTimetable] = useState<TimetableItem[]>([]);
+  const [newTimetable, setNewTimetable] = useState<
+    Omit<TimetableItem, "id" | "teacher" | "lesson">
+  >({
     lesson_code: "",
     teacher_id: "",
     weekdays: "",
@@ -17,7 +35,9 @@ const TimetablePage = () => {
     end_time: "",
     school_year: 1,
   });
-  const [editTimetable, setEditTimetable] = useState<any | null>(null);
+  const [editTimetable, setEditTimetable] = useState<TimetableItem | null>(
+    null
+  );
 
   useEffect(() => {
     const fetchTimetable = async () => {

@@ -35,7 +35,7 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
 
   return (
     <div className="p-8 min-h-screen w-full space-y-6 bg-[#283131]">
-      <h1 className="text-3xl font-bold text-center bg-gradient-to-r from-[#3ef4cb] to-[#2dc2bd] shadow-md text-[#293536] py-4 rounded-xl shadow-sm">
+      <h1 className="text-3xl font-bold text-center bg-[#65d8ba]  shadow-md text-[#293536] py-4 rounded-xl shadow-sm">
         Хичээлүүд
       </h1>
 
@@ -77,7 +77,7 @@ const LessonView = async ({ params }: { params: { lessonId: string } }) => {
           ))
         ) : (
           <p className="text-center text-gray-400 col-span-full">
-            No lessons found.
+            Хичээл олдоогүй.
           </p>
         )}
       </div>

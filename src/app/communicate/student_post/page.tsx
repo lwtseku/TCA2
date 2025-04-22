@@ -80,7 +80,7 @@ export default async function StudentPostPage({
           <ul className="space-y-2">
             {teachers.map((teacher) => (
               <li key={teacher.user_id}>
-                <Link
+                <a
                   href={`/communicate/${teacher.user_id}`}
                   className={`p-3 flex justify-center text-lg font-semibold rounded ${
                     selectedTeacherId === teacher.user_id
@@ -89,7 +89,7 @@ export default async function StudentPostPage({
                   }`}
                 >
                   {teacher.name}
-                </Link>
+                </a>
               </li>
             ))}
           </ul>

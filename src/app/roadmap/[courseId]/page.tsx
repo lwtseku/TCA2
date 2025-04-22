@@ -83,7 +83,7 @@ export default async function CoursePage({
                       <summary className="cursor-pointer font-semibold text-xl p-4 select-none text-gray-300 hover:text-[#24ffa5]">
                         {type === "Pro"
                           ? "Мэргэжлийн хичээлүүд"
-                          : "Ерөнхий эрдэмийн хичээлүүд"}
+                          : "Ерөнхий эрдмийн хичээлүүд"}
                       </summary>
 
                       <div className="grid grid-cols-2 gap-4 p-4">

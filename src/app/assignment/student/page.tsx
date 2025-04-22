@@ -3,6 +3,7 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 interface Assignment {
   id: string;
@@ -16,26 +17,22 @@ interface Assignment {
 }
 
 export default function StudentPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
-
+  const { data: session } = useSession();
   const studentId = session?.user?.user_id;
   const schoolYear = session?.user?.school_year;
-  const role = session?.user?.role;
-
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [fileMap, setFileMap] = useState<{ [key: string]: File | null }>({});
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
 
   // 🛡️ Role шалгах — зөвхөн student role
-  useEffect(() => {
-    if (status === "loading") return; // Эхлээд session-ээ бүрэн дуустал хүлээнэ
+  // useEffect(() => {
+  //   if (status === "loading") return; // Эхлээд session-ээ бүрэн дуустал хүлээнэ
 
-    if (status === "unauthenticated" || session?.user.role !== "student") {
-      router.push("/not-authorized");
-    }
-  }, [session, status]);
+  //   if (status === "unauthenticated" || session?.user.role !== "student") {
+  //     router.push("/not-authorized");
+  //   }
+  // }, [session, status]);
 
   useEffect(() => {
     if (!schoolYear) return;
@@ -79,7 +76,7 @@ export default function StudentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#1e2627] px-6 py-10 text-white">
+    <div className="min-h-screen bg-[#283131] px-6 py-10 text-white">
       {loading ? (
         <p className="text-gray-400">⏳ Уншиж байна...</p>
       ) : assignments.length === 0 ? (
@@ -94,10 +91,12 @@ export default function StudentPage() {
             >
               {/* Зүүн тал - Багш болон даалгавар */}
               <div className="flex gap-4 items-start">
-                <img
+                <Image
                   src={a.teacher?.image || "/default-avatar.png"}
                   alt="Багш"
-                  className="w-14 h-14 rounded-full object-cover border border-white shadow"
+                  width={56}
+                  height={56}
+                  className="rounded-full object-cover border border-white shadow"
                 />
                 <div>
                   <h2 className="text-lg font-semibold text-gray-100 mb-1">

@@ -17,10 +17,8 @@ interface Submission {
 
 export default function TeacherPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   const teacherId = session?.user?.user_id;
-  const userRole = session?.user?.role;
 
   const [form, setForm] = useState({
     title: "",
@@ -31,13 +29,13 @@ export default function TeacherPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [scoreMap, setScoreMap] = useState<{ [key: string]: string }>({});
 
-  useEffect(() => {
-    if (status === "loading") return; // Эхлээд session-ээ бүрэн дуустал хүлээнэ
+  // useEffect(() => {
+  //   if (status === "loading") return; // Эхлээд session-ээ бүрэн дуустал хүлээнэ
 
-    if (status === "unauthenticated" || session?.user.role !== "teacher") {
-      router.push("/not-authorized");
-    }
-  }, [session, status]);
+  //   if (status === "unauthenticated" || session?.user.role !== "teacher") {
+  //     router.push("/not-authorized");
+  //   }
+  // }, [session, status]);
 
   // Хариулт татах
   useEffect(() => {
@@ -108,7 +106,7 @@ export default function TeacherPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#1e2627] px-6 py-10 text-white flex flex-col lg:flex-row gap-10">
+    <div className="min-h-screen bg-[#283131] px-6 py-10 text-white flex flex-col lg:flex-row gap-10">
       {/* Зүүн тал - Даалгавар үүсгэх хэсэг */}
       <div className="flex-1 bg-[#2e3d3e] p-8 rounded-xl border border-[#30e3ca] shadow-md hover:shadow-[0_0_15px_#30e3ca] transition-all">
         <h2 className="text-2xl font-bold mb-6">Даалгавар нэмэх</h2>

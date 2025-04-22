@@ -33,11 +33,6 @@ export async function GET(req: NextRequest) {
     }
 
     // Сургалтын жилд таарсан постуудыг татах
-    const posts = await prisma.post.findMany({
-      where: { school_year: currentUser.school_year },
-      select: { title: true, body: true, teacher_id: true },
-      orderBy: { created_at: "asc" },
-    });
 
     return NextResponse.redirect(new URL("/communicate/student_post", req.url));
   } catch (error) {

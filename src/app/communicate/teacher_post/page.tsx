@@ -1,13 +1,10 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import Link from "next/link";
 
-export default async function PostPage({
-  searchParams,
-}: {
-  searchParams: { year?: string };
-}) {
+export default async function PostPage() {
   const session = await auth();
   if (!session || !session.user) redirect("/sign-in");
 
@@ -15,13 +12,20 @@ export default async function PostPage({
   const currentUser = await prisma.users.findUnique({ where: { email } });
   if (!currentUser) redirect("/sign-in");
 
+  const headersList = await headers(); // ✅ `await` нэмсэн
+  const rawUrl = headersList.get("x-url") || "";
+  const url = new URL(rawUrl, "http://localhost");
+  const selectedYear = parseInt(url.searchParams.get("year") ?? "0");
+
   const schoolYears = [1, 2, 3, 4, 5];
-  const selectedYear = parseInt(searchParams.year ?? "0"); // ❗️await хассан
 
   const posts =
     selectedYear > 0
       ? await prisma.post.findMany({
-          where: { school_year: selectedYear, teacher_id: currentUser.user_id },
+          where: {
+            school_year: selectedYear,
+            teacher_id: currentUser.user_id,
+          },
           orderBy: { created_at: "asc" },
         })
       : [];
@@ -30,7 +34,6 @@ export default async function PostPage({
     currentUser.role === "teacher"
       ? "/communicate/teacher_post"
       : "/communicate/student_post";
-
   return (
     <div className="flex flex-col mt-3 mb-3 w-full h-screen bg-[#1e2627] overflow-y-hidden">
       {/* Navigation */}
@@ -152,23 +155,23 @@ export default async function PostPage({
       <script
         dangerouslySetInnerHTML={{
           __html: `
-            document.addEventListener("DOMContentLoaded", function () {
-              const form = document.getElementById("post-form");
-              if (!form) return;
+                document.addEventListener("DOMContentLoaded", function () {
+                    const form = document.getElementById("post-form");
+                    if (!form) return;
 
-              form.addEventListener("submit", function (e) {
-                e.preventDefault();
-                const formData = new FormData(form);
-                fetch("/api/post", {
-                  method: "POST",
-                  body: formData
-                }).then(() => {
-                  form.reset();
-                  window.location.reload();
+                    form.addEventListener("submit", function (e) {
+                    e.preventDefault();
+                    const formData = new FormData(form);
+                    fetch("/api/post", {
+                        method: "POST",
+                        body: formData
+                    }).then(() => {
+                        form.reset();
+                        window.location.reload();
+                    });
+                    });
                 });
-              });
-            });
-          `,
+                `,
         }}
       />
     </div>

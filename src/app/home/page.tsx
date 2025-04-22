@@ -8,7 +8,7 @@ const Home = async () => {
   const session = await auth();
 
   if (!session || !session.user) {
-    redirect("/auth/sign-in");
+    redirect("/sign-in");
     return null;
   }
 
@@ -68,7 +68,10 @@ const Home = async () => {
         <div className="lg:col-span-1 space-y-6">
           <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg text-center">
             <img
-              src={user.image || "/images/default-avatar.png"}
+              src={
+                user.image ||
+                "/images/487781992_1399606614564756_2379153872326703844_n.jpg"
+              }
               alt="User"
               className="w-24 h-24 mx-auto rounded-full border-2 border-[#24ffa5] shadow-lg shadow-[#24ffa5]"
             />
@@ -80,9 +83,11 @@ const Home = async () => {
                 ? `Оюутан`
                 : "Админ"}
             </p>
-            <p className="text-gray-400 text-sm mt-1">
-              Курс: {user.school_year || "-"}
-            </p>
+            {session?.user?.role === "student" && (
+              <p className="text-gray-400 text-sm mt-1">
+                Курс: {session.user.school_year || "-"}
+              </p>
+            )}
           </div>
 
           <div className="bg-[#13272e] p-6 rounded-2xl shadow-lg">

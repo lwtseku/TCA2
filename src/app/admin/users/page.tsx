@@ -6,8 +6,18 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 
 const UserManagementPage = () => {
-  const [users, setUsers] = useState<any[]>([]);
-  const [newUser, setNewUser] = useState({
+  interface User {
+    id: string;
+    user_id: string;
+    name: string;
+    email: string;
+    password?: string; // шинэ хэрэглэгчдэд хэрэгтэй, харин засахад заавал биш
+    role: "admin" | "teacher" | "student";
+    school_year: number;
+  }
+
+  const [users, setUsers] = useState<User[]>([]);
+  const [newUser, setNewUser] = useState<Omit<User, "id">>({
     user_id: "",
     name: "",
     email: "",
@@ -15,7 +25,7 @@ const UserManagementPage = () => {
     role: "student",
     school_year: 1,
   });
-  const [editUser, setEditUser] = useState<any | null>(null);
+  const [editUser, setEditUser] = useState<User | null>(null);
 
   const router = useRouter();
 

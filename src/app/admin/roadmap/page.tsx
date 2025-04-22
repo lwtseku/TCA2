@@ -6,10 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const RoadmapPage = () => {
+  interface RoadmapItem {
+    id: string;
+    lesson_code: string;
+    lesson_name: string;
+    credits: number;
+    type: string;
+    semester: string;
+    school_year: number;
+  }
+
   const router = useRouter();
 
-  const [roadmaps, setRoadmaps] = useState<any[]>([]);
-  const [newItem, setNewItem] = useState({
+  const [roadmaps, setRoadmaps] = useState<RoadmapItem[]>([]);
+  const [newItem, setNewItem] = useState<Omit<RoadmapItem, "id">>({
     lesson_code: "",
     lesson_name: "",
     credits: 0,
@@ -17,7 +27,7 @@ const RoadmapPage = () => {
     semester: "",
     school_year: 0,
   });
-  const [editItem, setEditItem] = useState<any | null>(null);
+  const [editItem, setEditItem] = useState<RoadmapItem | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -62,8 +72,8 @@ const RoadmapPage = () => {
     setRoadmaps(roadmaps.filter((item) => item.id !== id));
   };
 
-  const groupBySchoolYear = (items: any[]) => {
-    return items.reduce((acc: Record<number, any[]>, item) => {
+  const groupBySchoolYear = (items: RoadmapItem[]) => {
+    return items.reduce((acc: Record<number, RoadmapItem[]>, item) => {
       const year = item.school_year || 0;
       if (!acc[year]) acc[year] = [];
       acc[year].push(item);

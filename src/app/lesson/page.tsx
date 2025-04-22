@@ -86,7 +86,7 @@ const Lesson = async () => {
           </div>
         ))
       ) : (
-        <p className="text-gray-500 text-center">No lessons found.</p>
+        <p className="text-gray-500 text-center">Хичээл олдсонгүй.</p>
       )}
     </div>
   );

@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create a new post with the current user's user_id as teacher_id
-    const newPost = await prisma.post.create({
+    await prisma.post.create({
       data: {
         teacher_id: currentUser.user_id, // Use the user_id of the logged-in user
         title,
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const posts = await prisma.post.findMany({
+    await prisma.post.findMany({
       where: { teacher_id: currentUser.user_id, school_year: parsedSchoolYear },
       select: { title: true, body: true, teacher_id: true },
       orderBy: { created_at: "asc" },

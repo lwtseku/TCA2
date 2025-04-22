@@ -7,15 +7,29 @@ import { Input } from "@/components/ui/input";
 
 const LessonsPage = () => {
   const router = useRouter();
-  const [lessons, setLessons] = useState<any[]>([]);
-  const [newLesson, setNewLesson] = useState({
+  // 1. Interface тодорхойлох
+  interface Lesson {
+    id: string;
+    lesson_code: string;
+    lesson_name: string;
+    credits: number;
+    description: string;
+    teacher_id: string | null;
+    teacher?: {
+      name: string;
+    };
+  }
+
+  // 2. State-уудыг шинэчлэх
+  const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [newLesson, setNewLesson] = useState<Omit<Lesson, "id" | "teacher">>({
     lesson_code: "",
     lesson_name: "",
     credits: 0,
     description: "",
     teacher_id: "",
   });
-  const [editLesson, setEditLesson] = useState<any | null>(null);
+  const [editLesson, setEditLesson] = useState<Lesson | null>(null);
 
   useEffect(() => {
     const fetchLessons = async () => {
