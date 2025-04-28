@@ -73,6 +73,7 @@ model Roadmap {
     type        TypesGP?
     semester    Semester?
     school_year Int?
+    Description String?
 }
 
 model Lesson_list {

@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { TypesGP } from "@prisma/client";
+import BackButton from "@/components/BackButton";
 
 const prisma = new PrismaClient();
 
@@ -22,9 +23,16 @@ const Lesson = async () => {
 
   return (
     <div className="p-8 min-h-screen w-full space-y-6 bg-[#283131]">
-      <h1 className="text-3xl font-bold text-center bg-[#65d8ba] shadow-md text-[#293536] py-4 rounded-xl shadow-sm">
-        Хичээлүүд
-      </h1>
+      <div className="relative flex items-center justify-center">
+        <div className="absolute left-0">
+          <BackButton />
+        </div>
+
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-wide">Хичээлүүд</h1>
+          <div className="w-50 mx-auto mt-4 border-t-2 border-[#65d8ba]"></div>
+        </div>
+      </div>
 
       {session.user.role === "teacher" && Teacherlessonlist.length > 0 ? (
         Teacherlessonlist.map((lesson) => (

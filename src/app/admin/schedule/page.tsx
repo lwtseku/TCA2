@@ -1,11 +1,9 @@
-// This file contains the AdminSchedulePage component with updated styles
-// using the preferred color palette: bg-[#0f181e], bg-[#13272e], border-[#6be4b920], bg-[#6be4b9]
-
 "use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 interface Schedule {
   id: string;
@@ -37,100 +35,83 @@ const AdminSchedulePage = () => {
   const router = useRouter();
   const [schedules, setSchedules] = useState<GroupedSchedule[]>([]);
   const [newSchedule, setNewSchedule] = useState({ event: "", date: "" });
-  const [editSchedule, setEditSchedule] = useState<Schedule>({
-    id: "",
-    event: "",
-    date: "",
-  });
+  const [editSchedule, setEditSchedule] = useState<Schedule | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  const fetchSchedules = async () => {
+    setLoading(true);
+    const res = await fetch("/api/schedule");
+    const data = await res.json();
+    setSchedules(data);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    const fetchSchedules = async () => {
-      setLoading(true);
-      const res = await fetch("/api/schedule");
-      const data = await res.json();
-      setSchedules(data);
-      setLoading(false);
-    };
     fetchSchedules();
   }, []);
 
   const handleAdd = async () => {
     if (!newSchedule.event || !newSchedule.date) {
-      alert("Үйл явдал болон огноо шаардлагатай.");
+      alert("Үйл явдал болон огноо оруулна уу.");
       return;
     }
-
     setLoading(true);
     const res = await fetch("/api/schedule", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newSchedule),
     });
-
-    const result = await res.json();
     if (res.ok) {
-      const month = new Date(result.date).getMonth();
-      setSchedules((prev) => {
-        const updated = [...prev];
-        if (!updated[month]) {
-          updated[month] = { month: month + 1, schedules: [] };
-        }
-        updated[month].schedules.push(result);
-        return updated;
-      });
+      await fetchSchedules();
       setNewSchedule({ event: "", date: "" });
+      setIsAddOpen(false);
     } else {
+      const result = await res.json();
       alert(result.error || "Нэмэхэд алдаа гарлаа.");
     }
     setLoading(false);
   };
 
   const handleUpdate = async () => {
+    if (!editSchedule) return;
     setLoading(true);
     const res = await fetch("/api/schedule", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editSchedule),
     });
-
-    const result = await res.json();
     if (res.ok) {
-      setSchedules((prev) =>
-        prev.map((group) =>
-          group.month === new Date(result.date).getMonth() + 1
-            ? {
-                ...group,
-                schedules: group.schedules.map((item) =>
-                  item.id === result.id ? result : item
-                ),
-              }
-            : group
-        )
-      );
-      setEditSchedule({ id: "", event: "", date: "" });
+      await fetchSchedules();
+      setEditSchedule(null);
     } else {
+      const result = await res.json();
       alert(result.error || "Засахад алдаа гарлаа.");
     }
     setLoading(false);
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Устгахдаа итгэлтэй байна уу?")) return;
+    if (!confirm("Энэ хуваарийг устгах уу?")) return;
     setLoading(true);
     const res = await fetch(`/api/schedule?id=${id}`, { method: "DELETE" });
     if (res.ok) {
-      setSchedules((prev) =>
-        prev.map((group) => ({
-          ...group,
-          schedules: group.schedules.filter((s) => s.id !== id),
-        }))
-      );
+      await fetchSchedules();
     } else {
-      alert("Устгахад алдаа гарлаа.");
+      alert("Устгах үед алдаа гарлаа.");
     }
     setLoading(false);
   };
+
+  const filteredSchedules = schedules
+    .map((group) => ({
+      ...group,
+      schedules: group.schedules.filter((s) =>
+        s.event.toLowerCase().includes(searchTerm.toLowerCase())
+      ),
+    }))
+    .filter((group) => group.schedules.length > 0);
 
   return (
     <div className="fixed inset-0 overflow-y-auto bg-[#0f181e] text-white py-10 px-6">
@@ -139,7 +120,7 @@ const AdminSchedulePage = () => {
         <div className="flex justify-between items-center mb-10 gap-4">
           <Button
             variant="outline"
-            onClick={() => router.push("/sign-up")}
+            onClick={() => router.back()}
             className="text-[#0f181e] border-[#6be4b9] hover:bg-[#13272e] active:bg-[#6be4b9] active:text-[#0f181e]"
           >
             ← Буцах
@@ -150,112 +131,58 @@ const AdminSchedulePage = () => {
           <div className="w-24" />
         </div>
 
-        {/* Add Schedule */}
-        <div className="bg-[#13272e] p-6 shadow-xl rounded-xl mb-12 w-full">
-          <h2 className="text-2xl font-semibold text-[#6be4b9] text-center mb-4">
-            ➕ Хуваарь нэмэх
-          </h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <input
-              type="text"
-              placeholder="Үйл явдлын нэр"
-              value={newSchedule.event}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, event: e.target.value })
-              }
-              className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
-            />
-            <input
-              type="date"
-              value={newSchedule.date}
-              onChange={(e) =>
-                setNewSchedule({ ...newSchedule, date: e.target.value })
-              }
-              className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
-            />
-          </div>
-          <button
-            onClick={handleAdd}
-            disabled={loading}
-            className="w-full mt-4 bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] py-2 rounded-md font-semibold"
-          >
-            {loading ? "Нэмж байна..." : "Хуваарь нэмэх"}
-          </button>
-        </div>
+        {/* Search */}
+        <Input
+          placeholder="Хуваарийн нэрээр хайх..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="bg-[#0f181e] text-white border border-[#6be4b920] mb-8"
+        />
 
-        {/* Edit Schedule */}
-        {editSchedule.id && (
-          <div className="bg-[#13272e] p-6 shadow-xl rounded-xl mb-12 w-full">
-            <h2 className="text-2xl font-semibold text-yellow-400 text-center mb-4">
-              ✏️ Хуваарь засах
-            </h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <input
-                type="text"
-                value={editSchedule.event}
-                onChange={(e) =>
-                  setEditSchedule({ ...editSchedule, event: e.target.value })
-                }
-                className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
-              />
-              <input
-                type="date"
-                value={editSchedule.date}
-                onChange={(e) =>
-                  setEditSchedule({ ...editSchedule, date: e.target.value })
-                }
-                className="w-full border border-[#6be4b920] rounded-md p-2 bg-[#0f181e] text-white"
-              />
-            </div>
-            <div className="flex gap-4 mt-4">
-              <button
-                onClick={handleUpdate}
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-[#0f181e] py-2 rounded-md font-semibold"
-              >
-                {loading ? "Шинэчлэх..." : "Хадгалах"}
-              </button>
-              <button
-                onClick={() => setEditSchedule({ id: "", event: "", date: "" })}
-                className="w-full border border-[#6be4b920] text-white hover:bg-[#0f181e] rounded-md py-2"
-              >
-                Цуцлах
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Add Button */}
+        <div className="text-center mb-8">
+          <Button
+            onClick={() => setIsAddOpen(true)}
+            className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] font-semibold px-6 py-2 rounded-lg"
+          >
+            ➕ Шинэ хуваарь нэмэх
+          </Button>
+        </div>
 
         {/* Schedule List */}
         <div className="space-y-8">
-          {schedules.map((group) => (
+          {filteredSchedules.map((group) => (
             <div key={group.month}>
-              <h2 className="text-2xl font-semibold text-white mb-4 border-b border-[#6be4b920] pb-2">
+              <h2 className="text-2xl font-semibold mb-4 border-b border-[#6be4b920] pb-2">
                 {monthNames[group.month - 1]}
               </h2>
-              <ul className="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+              <ul className="space-y-3">
                 {group.schedules.map((s) => (
                   <li
                     key={s.id}
-                    className="flex justify-between items-center bg-[#13272e] p-4 rounded-lg shadow-sm hover:shadow-md transition border border-[#6be4b920]"
+                    className="flex justify-between items-center bg-[#13272e] p-4 rounded-lg border border-[#6be4b920] hover:shadow-lg"
                   >
                     <div>
-                      <p className="font-medium text-white">{s.event}</p>
+                      <p className="font-semibold text-white">{s.event}</p>
                       <p className="text-sm text-gray-400">
                         {new Date(s.date).toLocaleDateString()}
                       </p>
                     </div>
-                    <div className="flex gap-3">
-                      <button
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        className="bg-[#6be4b9] text-[#0f181e]"
                         onClick={() => setEditSchedule(s)}
-                        className="bg-[#6be4b9] hover:bg-[#53dab0] text-[#0f181e] px-3 py-1 rounded-md"
                       >
                         Засах
-                      </button>
-                      <button
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="destructive"
                         onClick={() => handleDelete(s.id)}
-                        className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md"
                       >
                         Устгах
-                      </button>
+                      </Button>
                     </div>
                   </li>
                 ))}
@@ -263,9 +190,84 @@ const AdminSchedulePage = () => {
             </div>
           ))}
         </div>
+
+        {/* Add Modal */}
+        {isAddOpen && (
+          <ScheduleModal
+            schedule={newSchedule}
+            setSchedule={setNewSchedule}
+            onSave={handleAdd}
+            onCancel={() => setIsAddOpen(false)}
+            isEditing={false}
+          />
+        )}
+
+        {/* Edit Modal */}
+        {editSchedule && (
+          <ScheduleModal
+            schedule={editSchedule}
+            setSchedule={setEditSchedule}
+            onSave={handleUpdate}
+            onCancel={() => setEditSchedule(null)}
+            isEditing={true}
+          />
+        )}
       </div>
     </div>
   );
 };
+
+type ScheduleModalProps = {
+  schedule: { event: string; date: string };
+  setSchedule: (s: any) => void;
+  onSave: () => void;
+  onCancel: () => void;
+  isEditing: boolean;
+};
+
+const ScheduleModal = ({
+  schedule,
+  setSchedule,
+  onSave,
+  onCancel,
+  isEditing,
+}: ScheduleModalProps) => (
+  <div className="bg-[#13272e]/90 fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="bg-[#0f181e] p-6 rounded-xl shadow-lg w-full max-w-lg space-y-6">
+      <h2 className="text-2xl font-bold text-center text-[#6be4b9]">
+        {isEditing ? "✏️ Хуваарь засах" : "➕ Хуваарь нэмэх"}
+      </h2>
+      <div className="space-y-4">
+        <Input
+          value={schedule.event}
+          onChange={(e) => setSchedule({ ...schedule, event: e.target.value })}
+          placeholder="Үйл явдлын нэр"
+          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+        />
+        <Input
+          type="date"
+          value={schedule.date}
+          onChange={(e) => setSchedule({ ...schedule, date: e.target.value })}
+          className="bg-[#0f181e] text-white border border-[#6be4b920] rounded-lg"
+        />
+      </div>
+      <div className="flex gap-4 pt-4">
+        <Button
+          onClick={onSave}
+          className="w-full bg-[#6be4b9] text-[#0f181e] font-semibold"
+        >
+          Хадгалах
+        </Button>
+        <Button
+          onClick={onCancel}
+          variant="outline"
+          className="w-full border-[#6be4b9] text-[#6be4b9]"
+        >
+          Болих
+        </Button>
+      </div>
+    </div>
+  </div>
+);
 
 export default AdminSchedulePage;

@@ -8,6 +8,7 @@ interface Schedule {
   date: string;
 }
 
+const weekDays = ["Дав", "Мяг", "Лха", "Пү", "Ба", "Бя", "Ням"];
 const monthNames = [
   "1-р сар",
   "2-р сар",
@@ -37,12 +38,13 @@ const UserSchedulePage = () => {
       const data = await res.json();
       setSchedules(data.flatMap((group: any) => group.schedules));
     };
-
     fetchSchedules();
   }, []);
 
   const getDaysInMonth = (month: number, year: number) =>
     new Date(year, month, 0).getDate();
+  const getFirstWeekDay = (month: number, year: number) =>
+    (new Date(year, month - 1, 1).getDay() + 6) % 7; // make Monday start (0=Mon)
 
   const isEventDay = (day: number, month: number, year: number) =>
     schedules.some((s) => {
@@ -76,6 +78,7 @@ const UserSchedulePage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {months.map((month) => {
           const days = getDaysInMonth(month, year);
+          const firstWeekday = getFirstWeekDay(month, year);
 
           return (
             <div
@@ -89,7 +92,18 @@ const UserSchedulePage = () => {
                 {monthNames[month - 1]}
               </button>
 
+              <div className="grid grid-cols-7 gap-1 text-sm mb-1 text-center text-gray-400">
+                {weekDays.map((day) => (
+                  <div key={day} className="font-medium">
+                    {day}
+                  </div>
+                ))}
+              </div>
+
               <div className="grid grid-cols-7 gap-1 text-sm">
+                {[...Array(firstWeekday)].map((_, i) => (
+                  <div key={`empty-${i}`} />
+                ))}
                 {[...Array(days)].map((_, index) => {
                   const day = index + 1;
                   const hasEvent = isEventDay(day, month, year);
@@ -128,7 +142,7 @@ const UserSchedulePage = () => {
       {renderCalendarBlock(2024, [9, 10, 11, 12])}
       {renderCalendarBlock(2025, [1, 2, 3, 4, 5, 6, 7, 8])}
 
-      {/* 🔍 Day event modal */}
+      {/* Day Modal */}
       {selectedDay && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-[#13272e] p-6 rounded-xl shadow-lg max-w-md w-full">
@@ -152,7 +166,7 @@ const UserSchedulePage = () => {
         </div>
       )}
 
-      {/* 🔍 Full month modal */}
+      {/* Full Month Modal */}
       {selectedMonth && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
           <div className="bg-[#13272e] p-6 rounded-xl shadow-lg max-w-xl w-full">
