@@ -4,52 +4,51 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import Link from "next/link";
 
-export default async function PostPage() {
+export default async function PostPage({
+  searchParams,
+}: {
+  searchParams: { year?: string };
+}) {
+  const { year } = await searchParams;
+
   const session = await auth();
-  if (!session || !session.user) redirect("/sign-in");
+  if (!session || !session.user) {
+    redirect("/auth/sign-in");
+  }
 
   const email = session.user.email!;
   const currentUser = await prisma.users.findUnique({ where: { email } });
-  if (!currentUser) redirect("/sign-in");
-
-  const headersList = await headers(); // ✅ `await` нэмсэн
-  const rawUrl = headersList.get("x-url") || "";
-  const url = new URL(rawUrl, "http://localhost");
-  const selectedYear = parseInt(url.searchParams.get("year") ?? "0");
+  if (!currentUser) {
+    redirect("/auth/sign-in");
+  }
 
   const schoolYears = [1, 2, 3, 4, 5];
+  const selectedYear = year ? parseInt(year) : schoolYears[0];
 
-  const posts =
-    selectedYear > 0
-      ? await prisma.post.findMany({
-          where: {
-            school_year: selectedYear,
-            teacher_id: currentUser.user_id,
-          },
-          orderBy: { created_at: "asc" },
-        })
-      : [];
+  const posts = await prisma.post.findMany({
+    where: {
+      school_year: selectedYear,
+    },
+    orderBy: {
+      created_at: "desc",
+    },
+  });
 
   const selectedButton =
     currentUser.role === "teacher"
       ? "/communicate/teacher_post"
       : "/communicate/student_post";
+
   return (
     <div className="flex flex-col mt-3 mb-3 w-full h-screen bg-[#1e2627] overflow-y-hidden">
       {/* Navigation */}
       <div className="flex w-full bg-[#313f40] shadow-sm shadow-[#6be4b9] mb-1 rounded-sm">
-        <Link
-          href={selectedButton}
-          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
-        >
-          Нийтлэл
-        </Link>
-        <Link
-          href="/communicate/1"
-          className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black flex items-center justify-center"
-        >
-          Мессеж
-        </Link>
+        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
+          <a href={selectedButton}>Нийтлэл</a>
+        </button>
+        <button className="flex-1 h-12 text-2xl font-bold text-gray-200 hover:bg-[#6be4b9] hover:text-black">
+          <a href="/communicate/1">Мессеж</a>
+        </button>
       </div>
 
       {/* User Info */}
@@ -76,7 +75,7 @@ export default async function PostPage() {
           <ul className="space-y-2">
             {schoolYears.map((year) => (
               <li key={year}>
-                <Link
+                <a
                   href={`/communicate/teacher_post?year=${year}`}
                   className={`text-lg p-3 rounded flex justify-center font-medium ${
                     selectedYear === year
@@ -85,7 +84,7 @@ export default async function PostPage() {
                   }`}
                 >
                   МКТК {year}-5 анги
-                </Link>
+                </a>
               </li>
             ))}
           </ul>
@@ -94,11 +93,14 @@ export default async function PostPage() {
         {/* Posts + Form */}
         <div className="w-10/12 h-full justify-center flex flex-col p-5">
           {/* Scrollable post list */}
-          <div className="flex-1 items-center justify-center overflow-y-auto pr-2">
+          <div
+            id="post-list"
+            className="flex-1 items-center justify-center overflow-y-auto pr-2"
+          >
             {selectedYear > 0 && (
               <>
                 {posts.length === 0 ? (
-                  <p className="text-gray-400">Одоогоор пост алга байна.</p>
+                  <p className="text-gray-400 ">Одоогоор пост алга байна.</p>
                 ) : (
                   posts.map((post, index) => (
                     <div
@@ -118,10 +120,12 @@ export default async function PostPage() {
             )}
           </div>
 
-          {/* Form */}
+          {/* Form - always visible */}
           {selectedYear > 0 && (
             <form
               id="post-form"
+              action="/api/post"
+              method="POST"
               className="sticky bottom-0 mt-3 space-y-3 p-1 rounded-md"
             >
               <div className="flex flex-row">
@@ -148,32 +152,47 @@ export default async function PostPage() {
               </div>
             </form>
           )}
+
+          {/* ✅ Refresh хийхгүйгээр fetch илгээдэг скрипт */}
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+              document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById("post-form");
+                if (!form) return;
+ 
+                form.addEventListener("submit", function (e) {
+                  e.preventDefault();
+                  const formData = new FormData(form);
+ 
+                  fetch("/api/post", {
+                    method: "POST",
+                    body: formData,
+                  })
+                  .then((res) => res.json())
+                  .then((data) => {
+                    if (data?.error) {
+                      alert("Алдаа: " + data.error);
+                      return;
+                    }
+ 
+                    const container = document.getElementById("post-list");
+                    const postDiv = document.createElement("div");
+                    postDiv.className = "mb-4 flex flex-col justify-center ml-56 items-center w-2/4 p-4 shadow-[#6be4b9] bg-[#313f40] rounded-md shadow-md";
+                    postDiv.innerHTML = \`
+                      <h3 class=\\"text-lg font-semibold text-white\\">Нийтлэлийн гарчиг: \${data.title}</h3>
+                      <p class=\\"text-gray-300\\">Нийтлэлийн агуулга: \${data.body}</p>
+                    \`;
+                    container.prepend(postDiv);
+                    form.reset();
+                  });
+                });
+              });
+            `,
+            }}
+          />
         </div>
       </div>
-
-      {/* Client-side script */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-                document.addEventListener("DOMContentLoaded", function () {
-                    const form = document.getElementById("post-form");
-                    if (!form) return;
-
-                    form.addEventListener("submit", function (e) {
-                    e.preventDefault();
-                    const formData = new FormData(form);
-                    fetch("/api/post", {
-                        method: "POST",
-                        body: formData
-                    }).then(() => {
-                        form.reset();
-                        window.location.reload();
-                    });
-                    });
-                });
-                `,
-        }}
-      />
     </div>
   );
 }

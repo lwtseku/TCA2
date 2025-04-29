@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
     maxFileSize: 100 * 1024 * 1024, // 100MB
   });
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // 🧠 Patch: manually inject headers needed by formidable
     (stream as any).headers = {
       "content-type": contentType,

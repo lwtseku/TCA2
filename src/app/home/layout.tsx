@@ -6,15 +6,6 @@ import SideNav from "@/components/ui/side-nav";
 import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 const metadata: Metadata = {
   title: '"Монгол Коосэн" Технологийн Коллеж',

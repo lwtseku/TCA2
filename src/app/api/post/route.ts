@@ -6,16 +6,18 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
+    // Өгөгдөл авахаар formData ашиглах
     const formData = await req.formData();
     const school_year = formData.get("school_year") as string;
     const title = formData.get("title") as string;
     const body = formData.get("body") as string;
 
+    // Бүх талбар зөв авсан эсэхийг шалгах
     if (!title || !school_year || !body) {
       return NextResponse.json({ error: "Missing data" }, { status: 400 });
     }
 
-    // Get the current session and user
+    // Хэрэглэгчийн нэвтрэх сессийг шалгах
     const session = await auth();
     if (!session || !session.user) {
       return NextResponse.json(
@@ -24,7 +26,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const email = session.user.email ?? undefined;
+    // Хэрэглэгчийн имэйл
+    const email = session.user.email!;
     if (!email) {
       throw new Error("Email is required");
     }
@@ -37,6 +40,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
+    // Сургалтын жил (school_year)-ийг тоон төрөлд хөрвүүлэх
     const parsedSchoolYear = parseInt(school_year, 10);
     if (isNaN(parsedSchoolYear)) {
       return NextResponse.json(
@@ -45,23 +49,19 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create a new post with the current user's user_id as teacher_id
-    await prisma.post.create({
+    // Шинэ пост үүсгэх
+    const newPost = await prisma.post.create({
       data: {
-        teacher_id: currentUser.user_id, // Use the user_id of the logged-in user
+        teacher_id: currentUser.user_id, // Нэвтэрсэн хэрэглэгчийн user_id ашиглана
         title,
         body,
-        school_year: parsedSchoolYear, // Store directly in the Post model
+        school_year: parsedSchoolYear, // Сургалтын жил хадгалагдана
       },
     });
 
-    await prisma.post.findMany({
-      where: { teacher_id: currentUser.user_id, school_year: parsedSchoolYear },
-      select: { title: true, body: true, teacher_id: true },
-      orderBy: { created_at: "asc" },
-    });
-
-    return NextResponse.redirect(new URL("/communicate/teacher_post", req.url));
+    return NextResponse.redirect(
+      new URL(`/communicate/teacher_post?year=${parsedSchoolYear}`, req.url)
+    );
   } catch (error) {
     console.error("Error creating post:", error);
     return NextResponse.json({ error: "Error saving post" }, { status: 500 });

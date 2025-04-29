@@ -32,9 +32,9 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Сургалтын жилд таарсан постуудыг татах
-
-    return NextResponse.redirect(new URL("/communicate/student_post", req.url));
+    return NextResponse.redirect(
+      new URL(`/communicate/student_post?user=${currentUser.user_id}`, req.url)
+    );
   } catch (error) {
     console.error("Алдаа гарлаа:", error);
     return NextResponse.json({ error: "Серверийн алдаа" }, { status: 500 });

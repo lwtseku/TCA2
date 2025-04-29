@@ -5,7 +5,6 @@ import { ReactNode } from "react";
 import SideNav from "@/components/ui/side-nav";
 import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

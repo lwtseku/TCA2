@@ -23,8 +23,9 @@ export async function POST(req: NextRequest) {
         message,
       },
     });
-
-    return NextResponse.redirect(new URL("/communicate/[user]", req.url));
+    return NextResponse.redirect(
+      new URL(`/communicate/${receiverId}?user=${receiverId}`, req.url)
+    );
   } catch (error) {
     console.error("POST: Error saving message:", error);
     return NextResponse.json(
