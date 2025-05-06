@@ -27,14 +27,16 @@ export default function RootLayout({
   return (
     <html lang="mn">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
       >
         <SessionWrapper>
           {" "}
           {/* ✅ client талаас SessionProvider-оор бүрхэнэ */}
-          <main className="flex items-center justify-center bg-white min-h-screen">
-            <div className="bg-white p-8 rounded-lg w-full max-w-4xl">
-              {children}
+          <main className="flex items-center justify-center bg-gray-100 w-screen">
+            <div className="bg-gray-100 p-8 rounded-lg w-full">
+              <div className="w-screen">
+                {children}
+                </div>
             </div>
           </main>
         </SessionWrapper>

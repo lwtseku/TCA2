@@ -28,8 +28,8 @@ const UserProfile: React.FC = () => {
           className="w-16 h-16 rounded-full mx-auto object-cover"
         />
         <h2 className="mt-3 text-xl font-semibold">Maiety Prajapati</h2>
-        <p className="text-sm text-gray-500">College Student</p>
-        <span className="mt-2 inline-block text-green-500">✔</span>
+        <p className="text-sm text-gray-300">College Student</p>
+        <span className="mt-2 inline-block text-[#19C3B7]">✔</span>
       </div>
 
       {/* Calendar Section */}

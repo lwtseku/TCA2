@@ -4,6 +4,8 @@
 
 body {
   font-family: Arial, Helvetica, sans-serif;
+  
+  @apply bg-white;
 }
 
 @layer base {
@@ -68,6 +70,8 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+    
+    @apply bg-white;
   }
 }
 body {

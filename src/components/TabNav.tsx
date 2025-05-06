@@ -14,7 +14,7 @@ const tabs = [
 
 const TabNav: React.FC<TabNavProps> = ({ activeTab, setActiveTab }) => {
   return (
-    <div className="flex space-x-6 border-b-2 mb-8 text-lg">
+    <div className="flex space-x-6 bg-white border-b-2 mb-8 text-lg">
       {tabs.map((tab) => (
         <button
           key={tab.name}

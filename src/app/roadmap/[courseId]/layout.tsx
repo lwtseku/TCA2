@@ -19,7 +19,7 @@ type LayoutProps = {
 const Layout = ({ children }: LayoutProps) => {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-[#d6dde7] text-black`}>
+      <body className={`${inter.className} bg-white text-black`}>
         <div className="flex overflow-hidden min-w-full min-h-screen">
           {/* Fixed SideNav */}
           <div className="fixed top-0 left-0 h-screen">
@@ -27,7 +27,7 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
 
           {/* Content Area */}
-          <div className="flex-1 justify-between min-w-screen  bg-[#d6dde7] ml-[200px]">
+          <div className="flex-1  overflow-hidden justify-between min-w-screen  bg-white ml-[200px]">
             {children}
           </div>
         </div>

@@ -1,20 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/globals.css";
 import { ReactNode } from "react";
 import SideNav from "@/components/ui/side-nav";
+import { Inter } from "next/font/google";
 
 const inter = Inter({ subsets: ["latin"] });
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: '"Монгол Коосэн" Технологийн Коллеж',
@@ -25,21 +16,24 @@ type LayoutProps = {
   children: ReactNode;
 };
 
-export default function Layout({ children }: LayoutProps) {
+const Layout = ({ children }: LayoutProps) => {
   return (
-    <html lang="mn" className="h-full">
-      <body
-        className={`${inter.className} bg-[#283131] h-full flex overflow-hidden`}
-      >
-        <SideNav />
-        <div className="w-full h-full overflow-hidden flex flex-col">
-          <div className="flex-grow overflow-y-auto h-full">
-            <div className="w-full flex justify-center mx-auto">
-              <main className="w-full max-w-7xl">{children}</main>
-            </div>
+    <html lang="en">
+      <body className={`${inter.className} bg-white text-black`}>
+        <div className="flex overflow-hidden min-w-full min-h-screen">
+          {/* Fixed SideNav */}
+          <div className="fixed top-0 left-0 h-screen">
+            <SideNav />
+          </div>
+
+          {/* Content Area */}
+          <div className="flex-1 justify-between min-w-screen w-full  bg-white ml-[260px] mr-0">
+            {children}
           </div>
         </div>
       </body>
     </html>
   );
-}
+};
+
+export default Layout;
