@@ -162,7 +162,7 @@ export default async function HomePage() {
         <div className="space-y-6 pb-0 mb-0 w-full ml-20 lg:w-[360px]">
           <div className="bg-white h-[700px] border border-gray-200 pb-0 mb-0 p-6 shadow space-y-4">
             <div className="flex flex-col justify-center items-center pb-0 mb-0 space-y-4">
-              <img src={user.image || "/images/default-avatar.png"} alt="User" className="w-24 h-24 rounded-full border-2 border-[#5584c6]" />
+              <img src={user.image || "/images/erdenebat.png"} alt="User" className="w-24 h-24 rounded-full border-2 border-[#5584c6]" />
               <div className="text-center">
                 <h2 className="text-lg font-bold text-gray-700">{user.name}</h2>
                 <p className="text-gray-600">Статус: {user.role === "teacher" ? "Багш" : user.role === "student" ? "Оюутан" : "Админ"}</p>
