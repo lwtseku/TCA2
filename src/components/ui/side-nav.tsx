@@ -12,6 +12,7 @@ import { NavItems } from "@/components/config";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { SignOut } from "../sign-out";
+import { ThemeToggle } from "../ThemeToggle"; // 🟢 ThemeToggle import хийсэн
 
 export default function SideNav() {
   const navItems = NavItems();
@@ -26,7 +27,10 @@ export default function SideNav() {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      window.localStorage.setItem("sidebarExpanded", JSON.stringify(isSidebarExpanded));
+      window.localStorage.setItem(
+        "sidebarExpanded",
+        JSON.stringify(isSidebarExpanded)
+      );
     }
   }, [isSidebarExpanded]);
 
@@ -40,14 +44,20 @@ export default function SideNav() {
         <div
           className={cn(
             isSidebarExpanded ? "w-[270px]" : "w-[88px]",
-            "shadow-md transition-all duration-300 ease-in-out hidden sm:flex h-screen bg-[#ffffff]"
+            "shadow-md transition-all duration-300 ease-in-out hidden sm:flex h-screen bg-background border-r border-border"
           )}
         >
           <aside className="flex flex-col w-full h-full overflow-x-hidden">
             <div className="mt-10 ml-6 mr-3">
               <div className="flex flex-col space-y-1 items-center justify-between space-x-2 mb-4">
-                <img src="/images/logo-side-nav.png" alt="err" className="w-12 h-10"/>
-                <h1 className="font-extrabold text-xl pt-0 text-center bg-gradient-to-br from-[#5584c6] from-20% to-[#C23436] to-80% bg-clip-text text-transparent flex justify-start ">Цахим сургалтын систем</h1>
+                <img
+                  src="/images/logo-side-nav.png"
+                  alt="err"
+                  className="w-12 h-10"
+                />
+                <h1 className="font-extrabold text-xl pt-0 text-center bg-gradient-to-br from-[#5584c6] from-20% to-[#C23436] to-80% bg-clip-text text-transparent flex justify-start">
+                  Цахим сургалтын систем
+                </h1>
               </div>
               <div className="flex flex-col space-y-5 mt-16">
                 {navItems.map((item, idx) =>
@@ -56,7 +66,7 @@ export default function SideNav() {
                       <SideNavItem
                         label={item.name}
                         icon={item.icon}
-                        path={item.href} 
+                        path={item.href}
                         active={item.active}
                         isSidebarExpanded={isSidebarExpanded}
                       />
@@ -66,7 +76,7 @@ export default function SideNav() {
               </div>
             </div>
 
-            <div className="sticky bottom-0 mt-auto mb-4">
+            <div className="sticky bottom-0 mt-auto mb-4 space-y-2">
               {navItems.map((item, idx) =>
                 item.position === "bottom" ? (
                   <Fragment key={idx}>
@@ -81,6 +91,9 @@ export default function SideNav() {
                 ) : null
               )}
               <SignOut />
+
+              {/* ✅ Dark / Light Mode Toggle Button нэмэгдсэн */}
+              <ThemeToggle />
             </div>
           </aside>
 
@@ -91,7 +104,10 @@ export default function SideNav() {
               onClick={toggleSidebar}
             >
               {isSidebarExpanded ? (
-                <ChevronLeft size={16} className="stroke-foreground text-white" />
+                <ChevronLeft
+                  size={16}
+                  className="stroke-foreground text-white"
+                />
               ) : (
                 <ChevronRight size={16} className="stroke-foreground" />
               )}
@@ -119,7 +135,7 @@ export const SideNavItem: React.FC<{
           : "hover:bg-[#1E356A] hover:text-white text-gray-600 font-bold dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
       }`}
     >
-      <div className="w-full font-base text-md 2 py-1.5 px-2 flex items-center space-x-7 rounded-md">
+      <div className="w-full font-base text-md py-1.5 px-2 flex items-center space-x-7 rounded-md">
         {icon}
         <span>{label}</span>
       </div>
@@ -133,13 +149,17 @@ export const SideNavItem: React.FC<{
             className={`relative flex items-center rounded-md ${
               active
                 ? "font-base text-xl text-[#5584c6] dark:bg-neutral-800 dark:text-white"
-                : "hover:bg-[#5584c6]  hover:text-neutral-700 text-neutral-500 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-white"
+                : "hover:bg-[#5584c6] hover:text-white text-muted-foreground dark:hover:bg-neutral-800 dark:hover:text-white"
             }`}
           >
             <div className="p-2">{icon}</div>
           </Link>
         </TooltipTrigger>
-        <TooltipContent side="left" className="px-3 py-1.5 text-xl" sideOffset={10}>
+        <TooltipContent
+          side="left"
+          className="px-3 py-1.5 text-xl"
+          sideOffset={10}
+        >
           <span>{label}</span>
         </TooltipContent>
       </Tooltip>

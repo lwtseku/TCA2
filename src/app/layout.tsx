@@ -1,45 +1,40 @@
-// src/app/layout.tsx
-import "./globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
 import type { Metadata } from "next";
-import SessionWrapper from "@/components/SessionWrapper"; // 👈
+import { Geist, Geist_Mono, Inter } from "next/font/google";
+import "@/app/globals.css";
+import { ReactNode } from "react";
+import SideNav from "@/components/ui/side-nav";
+import { ThemeProvider } from "next-themes";
+import { SessionProvider } from "next-auth/react";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: '"Монгол Коосэн" Технологийн Коллеж',
-  description: "lms",
+  description: "LMS System",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+type LayoutProps = {
+  children: ReactNode;
+};
+
+export default function RootLayout({ children }: LayoutProps) {
   return (
-    <html lang="mn">
+    <html lang="mn" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white`}
+        className={`${inter.className} bg-background text-foreground transition-colors`}
       >
-        <SessionWrapper>
-          {" "}
-          {/* ✅ client талаас SessionProvider-оор бүрхэнэ */}
-          <main className="flex items-center justify-center bg-gray-100 w-screen">
-            <div className="bg-gray-100 p-8 rounded-lg w-full">
-              <div className="w-screen">
+        <SessionProvider>
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+            <div className="flex overflow-hidden min-w-full min-h-screen">
+              <div className="fixed top-0 left-0 h-screen">
+                <SideNav />
+              </div>
+              <div className="flex-1 justify-between min-w-screen w-full ml-[260px] mr-0">
                 {children}
-                </div>
+              </div>
             </div>
-          </main>
-        </SessionWrapper>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
